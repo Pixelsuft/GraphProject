@@ -14,4 +14,4 @@ public:
     void on_update();
 };
 
-extern Clock* clock;
+extern Clock* gclock;

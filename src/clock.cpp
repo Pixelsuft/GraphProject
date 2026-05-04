@@ -1,8 +1,6 @@
 #include "clock.hpp"
 #include <SDL3/SDL.h>
 
-Clock* clock;
-
 Clock::Clock() {
     freq = static_cast<double>(SDL_GetPerformanceFrequency());
     double_dt = 0.0;

@@ -9,13 +9,14 @@
 Window* win;
 Render* ren;
 Frame* ui;
+Clock* gclock;
 
 App::App() {
     win = new Window();
     ren = new Render(win->get_handle());
     if (!is_inited())
         return;
-    clock = new Clock();
+    gclock = new Clock();
     win->set_shown(true);
     ui = new Frame("Main_UI");
     mouse_entered = false;
@@ -24,7 +25,7 @@ App::App() {
 App::~App() {
     if (is_inited()) {
         delete ui;
-        delete clock;
+        delete gclock;
     }
     delete ren;
     delete win;
@@ -84,8 +85,8 @@ bool App::on_event(SDL_Event& ev) {
 }
 
 bool App::on_update() {
-    clock->on_update();
-    win->set_title(std::string("FPS: ") + std::to_string(clock->fps));
+    gclock->on_update();
+    win->set_title(std::string("FPS: ") + std::to_string(gclock->fps));
     ren->clear(Color());
     ui->on_update(nullptr);
     ren->set_scale_enabled(true);

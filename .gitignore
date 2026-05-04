@@ -6,6 +6,7 @@ Debug
 Release
 ReleaseFast
 x64
+embuild
 joined.txt
 nul
 *.bat

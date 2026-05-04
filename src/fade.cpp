@@ -9,7 +9,7 @@ ColorFade::ColorFade() {
 void ColorFade::on_update() {
     if (!enabled)
         return;
-    timer += clock->dt;
+    timer += gclock->dt;
     if (timer >= duration) {
         cur_color = end_color;
         enabled = false;
