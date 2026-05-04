@@ -164,6 +164,7 @@
     <ClInclude Include="src\rect.hpp" />
     <ClInclude Include="src\render.hpp" />
     <ClInclude Include="src\res.hpp" />
+    <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\upng.hpp" />
     <ClInclude Include="src\window.hpp" />
   </ItemGroup>

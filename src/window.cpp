@@ -11,7 +11,7 @@ Window::Window() {
         return;
     }
     SDL_SetWindowMinimumSize(handle, 320, 200);
-    SDL_Surface* icon = res_load_surface("favicon.png");
+    SDL_Surface* icon = res->load_surface("favicon.png");
     if (icon) {
         SDL_SetWindowIcon(handle, icon);
         SDL_free(icon);

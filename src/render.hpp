@@ -1,6 +1,7 @@
 #pragma once
 #include "color.hpp"
 #include "rect.hpp"
+#include "texture.hpp"
 #include <SDL3/SDL_render.h>
 
 class Render {
@@ -22,6 +23,8 @@ public:
     void fill_rect(Rect rect, Color col);
     void draw_rect(Rect rect, Color col);
     void fill_circle(Point center, float radius, Color col);
+    void draw_texture(Point pos, Texture texture);
+    void draw_texture_sized(Rect rect, Texture texture);
 };
 
 extern Render* ren;

@@ -4,14 +4,17 @@
 #include "frame.hpp"
 #include "render.hpp"
 #include "window.hpp"
+#include "res.hpp"
 #include <SDL3/SDL.h>
 
 Window* win;
 Render* ren;
 Frame* ui;
 Clock* gclock;
+Res* res;
 
 App::App() {
+    res = new Res;
     win = new Window();
     ren = new Render(win->get_handle());
     if (!is_inited())
@@ -29,6 +32,7 @@ App::~App() {
     }
     delete ren;
     delete win;
+    delete res;
 }
 
 bool App::is_inited() { return win->is_inited() && ren->is_inited(); }

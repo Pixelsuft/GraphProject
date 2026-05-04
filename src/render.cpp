@@ -97,3 +97,13 @@ void Render::fill_circle(Point center, float radius, Color col) {
     }
     set_scale_enabled(true);
 }
+
+void Render::draw_texture(Point pos, Texture texture) {
+    SDL_FRect dst = {pos.x + offset.x, pos.y + offset.y, texture.size.x, texture.size.y};
+    SDL_RenderTexture(handle, texture.handle, nullptr, &dst);
+}
+
+void Render::draw_texture_sized(Rect rect, Texture texture) {
+    SDL_FRect dst = {rect.x + offset.x, rect.y + offset.y, rect.w, rect.h};
+    SDL_RenderTexture(handle, texture.handle, nullptr, &dst);
+}

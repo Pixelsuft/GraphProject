@@ -33,7 +33,7 @@ static std::pair<void*, size_t> read_data(SDL_IOStream* io) {
     return {nullptr, 0};
 }
 
-SDL_Surface* res_load_surface(std::string fn) {
+SDL_Surface* Res::load_surface(std::string fn) {
     auto buf = read_data(open_stream(fn));
     if (!buf.first)
         return nullptr;
@@ -72,4 +72,6 @@ SDL_Surface* res_load_surface(std::string fn) {
     return ret;
 }
 
-void res_init() {}
+Res::Res() {}
+
+Res::~Res() {}
