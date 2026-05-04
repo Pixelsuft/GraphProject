@@ -1,0 +1,8 @@
+CompileFlags:
+  Add:
+    - "-I../SDL3/include"
+    - "-I../SDL3_ttf/include"
+    - "-D_DEBUG"
+    - "-std=c++23"
+Completion:
+  HeaderInsertion: Never
