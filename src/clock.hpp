@@ -10,7 +10,7 @@ public:
     float dt;
     int fps;
 
-    Clock();
+    Clock() noexcept;
     void on_update();
 };
 

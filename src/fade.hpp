@@ -10,7 +10,7 @@ public:
     float duration;
     bool enabled;
 
-    ColorFade();
+    ColorFade() noexcept;
     void on_update();
     void start(Color from, Color to, float dur);
 };

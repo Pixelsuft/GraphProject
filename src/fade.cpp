@@ -1,7 +1,7 @@
 #include "fade.hpp"
 #include "clock.hpp"
 
-ColorFade::ColorFade() {
+ColorFade::ColorFade() noexcept {
     timer = duration = 0.f;
     enabled = false;
 }

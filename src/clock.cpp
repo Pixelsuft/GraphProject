@@ -1,7 +1,7 @@
 #include "clock.hpp"
 #include <SDL3/SDL.h>
 
-Clock::Clock() {
+Clock::Clock() noexcept {
     freq = static_cast<double>(SDL_GetPerformanceFrequency());
     double_dt = 0.0;
     dt = 0.f;
