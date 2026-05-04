@@ -26,10 +26,10 @@ void Frame::on_update(Container* parent) {
 }
 
 void Frame::on_draw(Container* parent) {
+    // TODO: is this right?
     Point prev_offset = ren->offset;
     float prev_scale = ren->scale;
-    ren->offset.x += (rect.x + inner_offset.x) * scale;
-    ren->offset.y += (rect.y + inner_offset.y) * scale;
+    ren->offset += (rect.as_point() + inner_offset) * scale;
     ren->scale *= scale;
     for (Container* c : child)
         c->on_draw(this);

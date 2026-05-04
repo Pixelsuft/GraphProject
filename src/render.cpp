@@ -75,3 +75,25 @@ void Render::draw_rect(Rect rect, Color col) {
     SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
     SDL_RenderRect(handle, real_rect.as_frect());
 }
+
+void Render::fill_circle(Point center, float radius, Color col) {
+    if (col.a <= 0.f || radius <= 0.f)
+        return;
+    set_scale_enabled(false);
+    Point real_center = center + offset * scale;
+    float r = radius * scale;
+    // TODO: switch to rendering geometry???
+    SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
+    SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+    for (float dy = -r; dy <= r; dy += 1.0f) {
+        float dx = SDL_sqrtf(r * r - dy * dy);
+        if (dx < 0.1f)
+            continue;
+        float x1 = real_center.x - dx;
+        float x2 = real_center.x + dx;
+        float y = real_center.y + dy;
+
+        SDL_RenderLine(handle, x1, y, x2, y);
+    }
+    set_scale_enabled(true);
+}

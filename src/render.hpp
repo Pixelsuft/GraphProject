@@ -21,6 +21,7 @@ public:
     void clear(Color col);
     void fill_rect(Rect rect, Color col);
     void draw_rect(Rect rect, Color col);
+    void fill_circle(Point center, float radius, Color col);
 };
 
 extern Render* ren;

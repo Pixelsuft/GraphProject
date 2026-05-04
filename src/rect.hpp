@@ -21,6 +21,22 @@ struct Point {
         y -= other.y;
         return *this;
     }
+
+    Point operator*(float scalar) const { return {x * scalar, y * scalar}; }
+
+    Point operator/(float scalar) const { return {x / scalar, y / scalar}; }
+
+    Point& operator*=(float scalar) {
+        x *= scalar;
+        y *= scalar;
+        return *this;
+    }
+
+    Point& operator/=(float scalar) {
+        x /= scalar;
+        y /= scalar;
+        return *this;
+    }
 };
 
 struct Rect {
@@ -69,6 +85,8 @@ struct Rect {
         h -= other.h;
         return *this;
     }
+
+    inline Point as_point() { return Point(x, y); }
 
     inline SDL_FRect* as_frect() { return reinterpret_cast<SDL_FRect*>(this); }
 };
