@@ -11,7 +11,6 @@ public:
     Color hover_color;
     Color down_color;
     bool real_hovered;
-    bool real_down;
 
     Button(std::string id);
     ~Button();
@@ -19,6 +18,6 @@ public:
     void on_update(Container* parent) override;
     void on_mouse_enter(Container* parent, Point pos, bool entered) override;
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;
-    void on_mouse_move(Container* parent, Point pos, Point dp) override;
+    void on_mouse_move(Container* parent, Point pos, Point dp, bool holding) override;
     void refresh_color();
 };

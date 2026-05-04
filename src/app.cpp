@@ -54,7 +54,7 @@ bool App::on_event(SDL_Event& ev) {
     case SDL_EVENT_MOUSE_MOTION:
         if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
             ui->on_mouse_move(nullptr, Point(ev.motion.x, ev.motion.y),
-                              Point(ev.motion.xrel, ev.motion.yrel));
+                              Point(ev.motion.xrel, ev.motion.yrel), false);
         return true;
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP:

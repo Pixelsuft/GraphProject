@@ -38,7 +38,7 @@ void Frame::on_draw(Container* parent) {
     ren->set_scale_enabled(true);
 }
 
-void Frame::on_mouse_move(Container* parent, Point pos, Point dp) {
+void Frame::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
     pos = (pos - rect.as_point() - inner_offset) / scale;
     dp /= scale;
     if (!left_down) {
@@ -59,12 +59,12 @@ void Frame::on_mouse_move(Container* parent, Point pos, Point dp) {
         }
     }
     if (c_hovered)
-        c_hovered->on_mouse_move(this, pos, dp);
+        c_hovered->on_mouse_move(this, pos, dp, left_down);
 }
 
 void Frame::on_mouse_enter(Container* parent, Point pos, bool entered) {
     if (parent == nullptr)
-        on_mouse_move(nullptr, pos, Point(-1, -1)); // Is this right?
+        on_mouse_move(nullptr, pos, Point(-1, -1), false); // Is this right?
 }
 
 void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
@@ -76,6 +76,6 @@ void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down
             c_hovered->on_mouse_down(this, pos, index, down);
         }
         if (!down)
-            on_mouse_move(parent, pos, Point());
+            on_mouse_move(parent, pos, Point(), down);
     }
 }

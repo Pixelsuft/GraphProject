@@ -8,7 +8,6 @@ Button::Button(std::string id) : Container(id) {
     hover_color = Color(0.f, 1.f, 0.f);
     down_color = Color(0.f, 0.6f, 0.f);
     real_hovered = false;
-    real_down = false;
     refresh_color();
 }
 
@@ -28,7 +27,6 @@ void Button::on_mouse_enter(Container* parent, Point pos, bool entered) {
 }
 
 void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
-    real_down = down;
     real_hovered = has_mouse_collision(parent, pos);
     fade.start(fade.cur_color, down ? down_color : hover_color, 0.1f);
     if (!down && real_hovered) {
@@ -36,8 +34,8 @@ void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     }
 }
 
-void Button::on_mouse_move(Container* parent, Point pos, Point dp) {
-    if (!real_down)
+void Button::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
+    if (!holding)
         return;
     if (has_mouse_collision(parent, pos)) {
         if (!real_hovered) {

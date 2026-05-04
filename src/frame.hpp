@@ -16,7 +16,7 @@ public:
     void on_resize(Container* parent) override;
     void on_update(Container* parent) override;
     void on_draw(Container* parent) override;
-    void on_mouse_move(Container* parent, Point pos, Point dp) override;
+    void on_mouse_move(Container* parent, Point pos, Point dp, bool holding) override;
     void on_mouse_enter(Container* parent, Point pos, bool entered) override;
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;
 };

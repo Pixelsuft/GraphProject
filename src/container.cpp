@@ -10,7 +10,7 @@ void Container::on_update(Container* parent) {}
 
 void Container::on_draw(Container* parent) {}
 
-void Container::on_mouse_move(Container* parent, Point pos, Point dp) {}
+void Container::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {}
 
 void Container::on_mouse_enter(Container* parent, Point pos, bool entered) {}
 
