@@ -149,6 +149,7 @@
     <ClCompile Include="src\frame.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render.cpp" />
+    <ClCompile Include="src\res.cpp" />
     <ClCompile Include="src\upng.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="src\frame.hpp" />
     <ClInclude Include="src\rect.hpp" />
     <ClInclude Include="src\render.hpp" />
+    <ClInclude Include="src\res.hpp" />
     <ClInclude Include="src\upng.hpp" />
     <ClInclude Include="src\window.hpp" />
   </ItemGroup>

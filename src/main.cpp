@@ -1,5 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include "app.hpp"
+#include "res.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -12,6 +13,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
         SDL_Quit();
         return SDL_APP_FAILURE;
     }
+    res_init();
     App* app = new App;
     if (!app->is_inited()) {
         TTF_Quit();
