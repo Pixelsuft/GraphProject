@@ -3,16 +3,15 @@
 #include <SDL3/SDL.h>
 #include <string>
 
-static SDL_IOStream* open_stream(std::string fp) {
+static SDL_IOStream* open_stream(std::string fn) {
 #ifdef JUMBO_BUILD
-    void* data = nullptr;
-    size_t size = 0;
-    // JUMBO_FILL_DATA
-    if (!data)
+    if (false)
         return nullptr;
-    return SDL_IOFromConstMem(data, size);
+    // JUMBO_FILL_ASSETS
+    else
+        return nullptr;
 #else
-    return SDL_IOFromFile((std::string("assets/") + fp).c_str(), "rb");
+    return SDL_IOFromFile((std::string("assets/") + fn).c_str(), "rb");
 #endif
 }
 
@@ -34,10 +33,8 @@ static std::pair<void*, size_t> read_data(SDL_IOStream* io) {
     return {nullptr, 0};
 }
 
-static void free_data(void* data) { SDL_free(data); }
-
-SDL_Surface* res_load_surface(std::string fp) {
-    auto buf = read_data(open_stream(fp));
+SDL_Surface* res_load_surface(std::string fn) {
+    auto buf = read_data(open_stream(fn));
     if (!buf.first)
         return nullptr;
     SDL_Surface* ret = nullptr;
@@ -71,6 +68,7 @@ SDL_Surface* res_load_surface(std::string fp) {
         }
         upng_free(handle);
     }
+    SDL_free(buf.first);
     return ret;
 }
 

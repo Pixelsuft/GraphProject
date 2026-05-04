@@ -11,13 +11,11 @@ Window::Window() {
         return;
     }
     SDL_SetWindowMinimumSize(handle, 320, 200);
-#ifndef __EMSCRIPTEN__
     SDL_Surface* icon = res_load_surface("favicon.png");
     if (icon) {
         SDL_SetWindowIcon(handle, icon);
         SDL_free(icon);
     }
-#endif
 }
 
 Window::~Window() {

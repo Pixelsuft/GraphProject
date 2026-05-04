@@ -3,4 +3,4 @@
 #include <string>
 
 void res_init();
-SDL_Surface* res_load_surface(std::string fp);
+SDL_Surface* res_load_surface(std::string fn);
