@@ -4,13 +4,14 @@
 #include "fade.hpp"
 
 class Button final : public Container {
-    ColorFade fade;
-
 public:
+    ColorFade fade;
     Color bg_color;
     Color border_color;
     Color hover_color;
     Color down_color;
+    bool real_hovered;
+    bool real_down;
 
     Button(std::string id);
     ~Button();
