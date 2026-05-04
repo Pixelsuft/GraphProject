@@ -26,19 +26,21 @@ void Frame::on_update(Container* parent) {
 }
 
 void Frame::on_draw(Container* parent) {
-    // TODO: is this right?
     Point prev_offset = ren->offset;
     float prev_scale = ren->scale;
-    ren->offset += (rect.as_point() + inner_offset) * scale;
+    ren->offset += rect.as_point() + inner_offset;
     ren->scale *= scale;
+    ren->set_scale_enabled(true);
     for (Container* c : child)
         c->on_draw(this);
     ren->offset = prev_offset;
     ren->scale = prev_scale;
+    ren->set_scale_enabled(true);
 }
 
 void Frame::on_mouse_move(Container* parent, Point pos, Point dp) {
-    // TODO: apply offset
+    pos = (pos - rect.as_point() - inner_offset) / scale;
+    dp /= scale;
     if (!left_down) {
         Container* new_hover = nullptr;
         for (auto it = child.rbegin(); it != child.rend(); ++it) {
@@ -70,7 +72,7 @@ void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down
     if (index == SDL_BUTTON_LEFT) {
         left_down = down;
         if (c_hovered != nullptr) {
-            // TODO: transform pos
+            pos = (pos - rect.as_point() - inner_offset) / scale;
             c_hovered->on_mouse_down(this, pos, index, down);
         }
         if (!down)

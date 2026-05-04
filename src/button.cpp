@@ -19,7 +19,6 @@ void Button::on_update(Container* parent) { fade.on_update(); }
 void Button::on_draw(Container* parent) {
     ren->fill_rect(rect, fade.cur_color);
     ren->draw_rect(rect, border_color);
-    ren->fill_circle(rect.as_point(), 20.f, border_color);
 }
 
 void Button::refresh_color() { fade.start(bg_color, bg_color, 0.f); }
