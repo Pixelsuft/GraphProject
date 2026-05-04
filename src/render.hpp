@@ -20,6 +20,7 @@ public:
     void set_scale_enabled(bool enabled);
     void clear(Color col);
     void fill_rect(Rect rect, Color col);
+    void draw_rect(Rect rect, Color col);
 };
 
 extern Render* ren;

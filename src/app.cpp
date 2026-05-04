@@ -42,9 +42,9 @@ void App::setup_ui() {
 void App::on_resize() {
     win->on_resize();
     ren->on_resize();
-    ui->rect.w = ren->size.x;
-    ui->rect.h = ren->size.y;
     ui->scale = (ren->size.x / win->size.x + ren->size.y / win->size.y) / 2.f;
+    ui->rect.w = ren->size.x / ui->scale;
+    ui->rect.h = ren->size.y / ui->scale;
     ui->on_resize(nullptr);
 }
 

@@ -66,3 +66,12 @@ void Render::fill_rect(Rect rect, Color col) {
     SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
     SDL_RenderFillRect(handle, real_rect.as_frect());
 }
+
+void Render::draw_rect(Rect rect, Color col) {
+    if (col.a <= 0.f)
+        return;
+    Rect real_rect = rect + offset;
+    SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
+    SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+    SDL_RenderRect(handle, real_rect.as_frect());
+}

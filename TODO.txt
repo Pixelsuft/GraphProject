@@ -1,1 +1,1 @@
-[ ] App manifest, version info, icon etc.
+[ ] App version info, icon etc.

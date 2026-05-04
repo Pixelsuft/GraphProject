@@ -2,14 +2,13 @@
 #include "color.hpp"
 
 class ColorFade {
+public:
+    Color cur_color;
     Color start_color;
     Color end_color;
     float timer;
     float duration;
     bool enabled;
-
-public:
-    Color cur_color;
 
     ColorFade();
     void on_update();
