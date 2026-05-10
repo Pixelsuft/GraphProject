@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\app.cpp" />
+    <ClCompile Include="src\background.cpp" />
     <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\clock.cpp" />
     <ClCompile Include="src\container.cpp" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.hpp" />
+    <ClInclude Include="src\background.hpp" />
     <ClInclude Include="src\button.hpp" />
     <ClInclude Include="src\clock.hpp" />
     <ClInclude Include="src\color.hpp" />

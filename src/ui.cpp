@@ -1,4 +1,5 @@
 #include "ui.hpp"
+#include "background.hpp"
 #include "button.hpp"
 #include "frame.hpp"
 #include "image.hpp"
@@ -18,9 +19,14 @@ static void set_selected_button(Button* btn) {
 
 void construct_ui() {
     // Workflow
-    root->add_child(new Frame("Frame_Flow"))
+    flow = new Frame("Frame_Flow");
+    root->add_child(flow)->set_resize_handler(
+        [&](Container* self, Container* parent) { self->rect = parent->rect; });
+    // Background
+    flow->add_child(new Background("Background"))
         ->set_resize_handler(
             [&](Container* self, Container* parent) { self->rect = parent->rect; });
+
     // Add button
     root->add_child(new Button("Button_Add"))
         ->set_child((new Image("Image_Add"))->set_texture(res->load_texture("add.png")))
