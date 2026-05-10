@@ -3,8 +3,15 @@
 #include <SDL3/SDL.h>
 
 Window::Window() {
+#ifdef _DEBUG
+    int w = 800;
+    int h = 600;
+#else
+    int w = 1152;
+    int h = 864;
+#endif
     handle =
-        SDL_CreateWindow("SuperPuperMegaGraphProject", 800, 600,
+        SDL_CreateWindow("SuperPuperMegaGraphProject", w, h,
                          SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
     if (!handle) {
         show_error(std::string("Failed to create window: ") + SDL_GetError());

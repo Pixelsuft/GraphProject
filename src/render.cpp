@@ -58,6 +58,16 @@ void Render::clear(Color col) {
     SDL_RenderClear(handle);
 }
 
+void Render::draw_line(Point start, Point end, Color col) {
+    if (col.a <= 0.f)
+        return;
+    Point real_start = start + offset;
+    Point real_end = end + offset;
+    SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
+    SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+    SDL_RenderLine(handle, real_start.x, real_start.y, real_end.x, real_end.y);
+}
+
 void Render::fill_rect(Rect rect, Color col) {
     if (col.a <= 0.f)
         return;
