@@ -13,7 +13,7 @@ Frame::~Frame() {
     child.clear();
 }
 
-void Frame::add_child(Container* cont) { child.push_back(cont); }
+void Frame::add_child_real(Container* cont) { child.push_back(cont); }
 
 void Frame::on_resize(Container* parent) {
     for (Container* c : child)

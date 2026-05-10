@@ -18,4 +18,5 @@ public:
     virtual void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down);
     virtual void on_mouse_enter(Container* parent, Point pos, bool entered);
     virtual bool has_mouse_collision(Container* parent, Point pos);
+    Container* set_rect(Rect new_rect);
 };

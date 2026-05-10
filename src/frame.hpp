@@ -1,8 +1,11 @@
 #pragma once
 #include "container.hpp"
+#include <type_traits>
 #include <vector>
 
 class Frame final : public Container {
+    void add_child_real(Container* cont);
+
 public:
     std::vector<Container*> child;
     Container* c_hovered;
@@ -12,7 +15,11 @@ public:
 
     Frame(std::string id);
     ~Frame();
-    void add_child(Container* cont);
+    template <typename T> T* add_child(T* cont) {
+        static_assert(std::is_base_of<Container, T>::value, "T must be a descendant of Container");
+        add_child_real(cont);
+        return cont;
+    }
     void on_resize(Container* parent) override;
     void on_update(Container* parent) override;
     void on_draw(Container* parent) override;
@@ -21,4 +28,4 @@ public:
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;
 };
 
-extern Frame* ui;
+extern Frame* root;

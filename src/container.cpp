@@ -22,3 +22,8 @@ bool Container::has_mouse_collision(Container* parent, Point pos) {
     return pos.x >= rect.x && pos.y >= rect.y && pos.x < (rect.x + rect.w) &&
            pos.y < (rect.y + rect.h);
 }
+
+Container* Container::set_rect(Rect new_rect) {
+    rect = new_rect;
+    return this;
+}

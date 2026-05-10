@@ -7,7 +7,6 @@ class App {
 public:
     App();
     ~App();
-    void setup_ui();
     bool is_inited();
     bool on_event(SDL_Event& ev);
     bool on_update();

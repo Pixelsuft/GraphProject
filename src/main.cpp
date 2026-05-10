@@ -1,6 +1,6 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include "app.hpp"
-#include "res.hpp"
+#include "ui.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -20,7 +20,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
         return SDL_APP_FAILURE;
     }
     app->on_resize();
-    app->setup_ui();
+    construct_ui();
     *appstate = app;
     return SDL_APP_CONTINUE;
 }
