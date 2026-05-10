@@ -4,6 +4,7 @@
 #include "frame.hpp"
 #include "image.hpp"
 #include "res.hpp"
+#include "vertex.hpp"
 #include <SDL3/SDL.h>
 
 static Frame* flow;
@@ -53,4 +54,5 @@ void construct_ui() {
     flow->add_child(new Background("Background"))
         ->set_resize_handler(
             [&](Container* self, Container* parent) { self->rect = parent->rect; });
+    flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
 }

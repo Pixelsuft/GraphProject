@@ -57,6 +57,9 @@
     <ClCompile Include="src\background.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.hpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\background.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vertex.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

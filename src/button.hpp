@@ -17,7 +17,7 @@ public:
     bool real_hovered;
 
     Button(std::string id);
-    ~Button();
+    ~Button() override;
     void on_draw(Container* parent) override;
     void on_update(Container* parent) override;
     void on_resize(Container* parent) override;

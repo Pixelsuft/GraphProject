@@ -154,6 +154,7 @@
     <ClCompile Include="src\res.cpp" />
     <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\upng.cpp" />
+    <ClCompile Include="src\vertex.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\ui.hpp" />
     <ClInclude Include="src\upng.hpp" />
+    <ClInclude Include="src\vertex.hpp" />
     <ClInclude Include="src\window.hpp" />
   </ItemGroup>
   <ItemGroup>

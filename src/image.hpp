@@ -8,7 +8,7 @@ public:
     bool stretch;
 
     Image(std::string id);
-    ~Image();
+    ~Image() override;
 
     void on_draw(Container* parent) override;
     Image* set_texture(Texture texture);

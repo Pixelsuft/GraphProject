@@ -14,7 +14,7 @@ public:
     bool left_down;
 
     Frame(std::string id);
-    ~Frame();
+    ~Frame() override;
     template <typename T> T* add_child(T* cont) {
         static_assert(std::is_base_of<Container, T>::value, "T must be a descendant of Container");
         add_child_real(cont);

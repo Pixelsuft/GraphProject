@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL3/SDL_rect.h>
-#include <cmath>
+#include <SDL3/SDL_stdinc.h>
 
 struct Point {
     float x;
@@ -9,10 +9,10 @@ struct Point {
     Point() noexcept : x(0.f), y(0.f) {}
     Point(float x, float y) noexcept : x(x), y(y) {}
 
-    inline float get_angle(Point base) { return std::atan2(y - base.y, x - base.x); }
+    inline float get_angle(Point base) { return SDL_atan2f(y - base.y, x - base.x); }
     inline Point rotate_point(Point pivot, float angle) {
-        float s = std::sin(angle);
-        float c = std::cos(angle);
+        float s = SDL_sinf(angle);
+        float c = SDL_cosf(angle);
         Point p = *this - pivot;
         return {p.x * c - p.y * s + pivot.x, p.x * s + p.y * c + pivot.y};
     }
