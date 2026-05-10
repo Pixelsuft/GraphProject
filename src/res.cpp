@@ -1,4 +1,5 @@
 #include "res.hpp"
+#include "render.hpp"
 #include "upng.hpp"
 #include <SDL3/SDL.h>
 #include <string>
@@ -70,6 +71,24 @@ SDL_Surface* Res::load_surface(std::string fn) {
     }
     SDL_free(buf.first);
     return ret;
+}
+
+static Texture create_texture_fallback() { return Texture(); }
+
+Texture Res::load_texture(std::string fn) {
+    SDL_Surface* surf = load_surface(fn);
+    if (!surf)
+        return create_texture_fallback();
+
+    Texture tex;
+    tex.handle = SDL_CreateTextureFromSurface(ren->get_handle(), surf);
+    if (tex.handle) {
+        tex.size.x = static_cast<float>(surf->w);
+        tex.size.y = static_cast<float>(surf->h);
+    }
+    SDL_DestroySurface(surf);
+
+    return tex.handle ? tex : create_texture_fallback();
 }
 
 Res::Res() {}

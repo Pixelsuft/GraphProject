@@ -87,6 +87,7 @@ struct Rect {
     }
 
     inline Point as_point() { return Point(x, y); }
+    inline Point as_size() { return Point(w, h); }
 
     inline SDL_FRect* as_frect() { return reinterpret_cast<SDL_FRect*>(this); }
 };

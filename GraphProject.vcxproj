@@ -147,6 +147,7 @@
     <ClCompile Include="src\container.cpp" />
     <ClCompile Include="src\fade.cpp" />
     <ClCompile Include="src\frame.cpp" />
+    <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render.cpp" />
     <ClCompile Include="src\res.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="src\container.hpp" />
     <ClInclude Include="src\fade.hpp" />
     <ClInclude Include="src\frame.hpp" />
+    <ClInclude Include="src\image.hpp" />
     <ClInclude Include="src\rect.hpp" />
     <ClInclude Include="src\render.hpp" />
     <ClInclude Include="src\res.hpp" />
