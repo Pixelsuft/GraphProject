@@ -2,7 +2,7 @@
 #include "render.hpp"
 
 Button::Button(std::string id) : Container(id) {
-    bg_color = Color();
+    bg_color = Color(0.f, 0.0f, 0.f);
     border_color = Color(0.f, 1.f, 0.f);
     hover_color = Color(0.f, 1.f, 0.f);
     down_color = Color(0.f, 0.6f, 0.f);
@@ -60,6 +60,7 @@ void Button::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
 }
 
 void Button::on_resize(Container* parent) {
+    Container::on_resize(parent);
     if (child) {
         child->rect = rect;
         child->on_resize(parent);

@@ -19,8 +19,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
         SDL_Quit();
         return SDL_APP_FAILURE;
     }
-    app->on_resize();
     construct_ui();
+    app->on_resize();
     *appstate = app;
     return SDL_APP_CONTINUE;
 }
