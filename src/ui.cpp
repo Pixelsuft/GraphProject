@@ -8,6 +8,7 @@
 #include <SDL3/SDL.h>
 
 static Frame* flow;
+static Image* detail;
 
 static void set_selected_button(Container* btn) {
     // Hacky way to allow toggle
@@ -59,6 +60,7 @@ void construct_ui() {
         ->set_click_handler([&](Button* self, Container*) {
             vertex_mode = 0;
             set_selected_button(self);
+            detail->visible = true;
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     // Stop button
@@ -67,6 +69,7 @@ void construct_ui() {
         ->set_click_handler([&](Button* self, Container*) {
             vertex_mode = 0;
             set_selected_button(self);
+            detail->visible = false;
         })
         ->set_rect({306.f, 10.f, 64.f, 64.f});
 
@@ -80,6 +83,12 @@ void construct_ui() {
         })
         ->set_resize_handler(
             [&](Container* self, Container* parent) { self->rect = parent->rect; });
+    // Detail for demo
+    detail = new Image("Detail", true);
+    detail->visible = false;
+    flow->add_child(detail)
+        ->set_texture(res->load_texture("cogwheel.png"))
+        ->set_rect({0.f, 0.f, 32.f, 32.f});
     // S, T vertexes
     flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
     flow->add_child(new Vertex("Vertex_T"))->set_rect({100.f, 150.f, 40.f, 40.f});

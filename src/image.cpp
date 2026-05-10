@@ -1,11 +1,13 @@
 #include "image.hpp"
 #include "render.hpp"
 
-Image::Image(std::string id) : Container(id) { stretch = false; }
+Image::Image(std::string id, bool stretch) : Container(id), stretch(stretch) {}
 
 Image::~Image() { tex.destroy(); }
 
 void Image::on_draw(Container* parent) {
+    if (!visible)
+        return;
     if (stretch) {
         ren->draw_texture_sized(rect, tex);
     } else {

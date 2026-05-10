@@ -7,7 +7,7 @@ public:
     Texture tex;
     bool stretch;
 
-    Image(std::string id);
+    Image(std::string id, bool stretch = false);
     ~Image() override;
 
     void on_draw(Container* parent) override;
