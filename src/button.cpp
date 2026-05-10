@@ -30,7 +30,7 @@ void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     real_hovered = has_mouse_collision(parent, pos);
     fade.start(fade.cur_color, down ? down_color : hover_color, 0.1f);
     if (!down && real_hovered) {
-        SDL_Log("TODO: Button click");
+        // TODO: click
     }
 }
 
