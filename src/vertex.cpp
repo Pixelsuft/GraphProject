@@ -2,6 +2,8 @@
 #include "render.hpp"
 #include <SDL3/SDL.h>
 
+int vertex_mode;
+
 Vertex::Vertex(std::string id) : Container(id) {
     color = Color(0.f, 1.f, 0.f, 0.5f);
     if (id.back() == 'S')
@@ -19,9 +21,11 @@ void Vertex::on_draw(Container* parent) {
 }
 
 void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
-    if (holding)
+    if (holding && vertex_mode != 1 && vertex_mode != 2)
         rect += dp;
 }
+
+void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {}
 
 bool Vertex::has_mouse_collision(Container* parent, Point pos) {
     if (Container::has_mouse_collision(parent, pos)) {

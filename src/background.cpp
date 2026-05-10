@@ -1,6 +1,7 @@
 #include "background.hpp"
 #include "frame.hpp"
 #include "render.hpp"
+#include "vertex.hpp"
 
 Background::Background(std::string id) : Container(id) {}
 
@@ -19,8 +20,18 @@ void Background::on_draw(Container* parent) {
 
 void Background::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
     // Let's hardcode this
-    if (holding)
+    if (holding && vertex_mode != 1)
         reinterpret_cast<Frame*>(parent)->inner_offset += dp;
 }
 
+void Background::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
+    if (onDown && down)
+        onDown(this, parent, pos);
+}
+
 bool Background::has_mouse_collision(Container* parent, Point pos) { return true; }
+
+Background* Background::set_down_handler(std::function<void(Background*, Container*, Point)> handler) {
+    onDown = std::move(handler);
+    return this;
+}
