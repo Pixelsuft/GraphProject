@@ -38,7 +38,9 @@ App::~App() {
 bool App::is_inited() { return win->is_inited() && ren->is_inited(); }
 
 void App::setup_ui() {
-    auto btn = new Button("Button_test");
+    auto btn = (new Button("Button_test"))->set_click_handler([](Button* self){
+        SDL_Log("CLICK: %s", self->id.c_str());
+    });
     btn->rect.x = btn->rect.y = 100.f;
     btn->rect.w = btn->rect.h = 50.f;
     ui->add_child(btn);
