@@ -16,6 +16,7 @@ Frame::~Frame() {
 void Frame::add_child_real(Container* cont) { child.push_back(cont); }
 
 void Frame::on_resize(Container* parent) {
+    Container::on_resize(parent);
     for (Container* c : child)
         c->on_resize(this);
 }

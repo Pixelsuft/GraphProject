@@ -4,7 +4,10 @@ Container::Container(std::string id) : id(id), visible(true), enabled(true) {}
 
 Container::~Container() {}
 
-void Container::on_resize(Container* parent) {}
+void Container::on_resize(Container* parent) {
+    if (onResize)
+        onResize(this);
+}
 
 void Container::on_update(Container* parent) {}
 
@@ -25,5 +28,10 @@ bool Container::has_mouse_collision(Container* parent, Point pos) {
 
 Container* Container::set_rect(Rect new_rect) {
     rect = new_rect;
+    return this;
+}
+
+Container* Container::set_resize_handler(std::function<void(Container*)> handler) {
+    onResize = std::move(handler);
     return this;
 }

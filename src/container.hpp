@@ -1,8 +1,11 @@
 #pragma once
 #include "rect.hpp"
 #include <string>
+#include <functional>
 
 class Container {
+    std::function<void(Container*)> onResize;
+
 public:
     std::string id;
     Rect rect;
@@ -18,5 +21,6 @@ public:
     virtual void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down);
     virtual void on_mouse_enter(Container* parent, Point pos, bool entered);
     virtual bool has_mouse_collision(Container* parent, Point pos);
+    Container* set_resize_handler(std::function<void(Container*)> handler);
     Container* set_rect(Rect new_rect);
 };
