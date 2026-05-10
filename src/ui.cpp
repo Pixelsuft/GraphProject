@@ -22,10 +22,6 @@ void construct_ui() {
     flow = new Frame("Frame_Flow");
     root->add_child(flow)->set_resize_handler(
         [&](Container* self, Container* parent) { self->rect = parent->rect; });
-    // Background
-    flow->add_child(new Background("Background"))
-        ->set_resize_handler(
-            [&](Container* self, Container* parent) { self->rect = parent->rect; });
 
     // Add button
     root->add_child(new Button("Button_Add"))
@@ -52,4 +48,9 @@ void construct_ui() {
         ->set_child((new Image("Image_Stop"))->set_texture(res->load_texture("stop.png")))
         ->set_click_handler([&](Button* self, Container*) { set_selected_button(self); })
         ->set_rect({306.f, 10.f, 64.f, 64.f});
+
+    // Background
+    flow->add_child(new Background("Background"))
+        ->set_resize_handler(
+            [&](Container* self, Container* parent) { self->rect = parent->rect; });
 }
