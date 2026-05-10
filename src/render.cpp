@@ -90,7 +90,7 @@ void Render::fill_circle(Point center, float radius, Color col) {
     if (col.a <= 0.f || radius <= 0.f)
         return;
     set_scale_enabled(false);
-    Point real_center = center + offset * scale;
+    Point real_center = (center + offset) * scale;
     float r = radius * scale;
     // TODO: switch to rendering geometry???
     SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
