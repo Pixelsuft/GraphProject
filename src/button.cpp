@@ -31,7 +31,11 @@ void Button::on_draw(Container* parent) {
     ren->draw_rect(rect, border_color);
 }
 
-void Button::refresh_color() { fade.start(bg_color, bg_color, 0.f); }
+void Button::refresh_color() {
+    if (real_hovered)
+        return;
+    fade.start(bg_color, bg_color, 0.f);
+}
 
 void Button::on_mouse_enter(Container* parent, Point pos, bool entered) {
     fade.start(fade.cur_color, entered ? hover_color : bg_color, 0.1f);
@@ -43,6 +47,8 @@ void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     if (!down && real_hovered && onClick) {
         onClick(this, parent);
     }
+    if (!down)
+        real_hovered = false;
 }
 
 void Button::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {

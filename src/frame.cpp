@@ -1,5 +1,6 @@
 #include "frame.hpp"
 #include "render.hpp"
+#include <algorithm>
 
 Frame::Frame(std::string id) : Container(id) {
     c_hovered = nullptr;
@@ -82,4 +83,10 @@ void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down
         if (!down)
             on_mouse_move(parent, pos, Point(), down);
     }
+}
+
+Container* Frame::child_by_id(std::string id) {
+    auto it =
+        std::find_if(child.begin(), child.end(), [&id](const Container* c) { return c->id == id; });
+    return (it != child.end()) ? *it : nullptr;
 }

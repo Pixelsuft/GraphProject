@@ -20,6 +20,7 @@ public:
         add_child_real(cont);
         return cont;
     }
+    Container* child_by_id(std::string id);
     void on_resize(Container* parent) override;
     void on_update(Container* parent) override;
     void on_draw(Container* parent) override;
