@@ -80,5 +80,7 @@ void construct_ui() {
         })
         ->set_resize_handler(
             [&](Container* self, Container* parent) { self->rect = parent->rect; });
+    // S, T vertexes
     flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
+    flow->add_child(new Vertex("Vertex_T"))->set_rect({100.f, 150.f, 40.f, 40.f});
 }

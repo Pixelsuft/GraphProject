@@ -1,6 +1,7 @@
 #include "frame.hpp"
 #include "render.hpp"
 #include <algorithm>
+#include <cstdlib>
 
 Frame::Frame(std::string id) : Container(id) {
     c_hovered = nullptr;
@@ -41,19 +42,24 @@ void Frame::on_draw(Container* parent) {
     ren->set_scale_enabled(true);
 }
 
+Container* Frame::find_focused(Point pos) {
+    Container* hovered = nullptr;
+    for (auto it = child.rbegin(); it != child.rend(); ++it) {
+        Container* c = *it;
+        if (c->visible && c->enabled && c->has_mouse_collision(this, pos)) {
+            hovered = c;
+            break;
+        }
+    }
+    return hovered;
+}
+
 void Frame::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
     // TODO: fix offset/scale
     pos = (pos - rect.as_point() - inner_offset) / scale;
     dp /= scale;
     if (!left_down) {
-        Container* new_hover = nullptr;
-        for (auto it = child.rbegin(); it != child.rend(); ++it) {
-            Container* c = *it;
-            if (c->visible && c->enabled && c->has_mouse_collision(this, pos)) {
-                new_hover = c;
-                break;
-            }
-        }
+        Container* new_hover = find_focused(pos);
         if (new_hover != c_hovered) {
             if (c_hovered)
                 c_hovered->on_mouse_enter(this, pos, false);
@@ -88,5 +94,17 @@ void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down
 Container* Frame::child_by_id(std::string id) {
     auto it =
         std::find_if(child.begin(), child.end(), [&id](const Container* c) { return c->id == id; });
+    if (it == child.end())
+        std::abort();
     return (it != child.end()) ? *it : nullptr;
+}
+
+void Frame::remove_child(Container* cont) {
+    if (c_hovered == cont)
+        c_hovered = nullptr;
+    delete cont;
+    auto it = std::find(child.begin(), child.end(), cont);
+    if (it == child.end())
+        std::abort();
+    child.erase(it);
 }

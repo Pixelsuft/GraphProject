@@ -1,4 +1,5 @@
 #include "vertex.hpp"
+#include "frame.hpp"
 #include "render.hpp"
 #include <SDL3/SDL.h>
 
@@ -25,7 +26,11 @@ void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
         rect += dp;
 }
 
-void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {}
+void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
+    if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
+        reinterpret_cast<Frame*>(parent)->remove_child(this);
+    }
+}
 
 bool Vertex::has_mouse_collision(Container* parent, Point pos) {
     if (Container::has_mouse_collision(parent, pos)) {

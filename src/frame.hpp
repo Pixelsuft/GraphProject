@@ -20,7 +20,9 @@ public:
         add_child_real(cont);
         return cont;
     }
+    void remove_child(Container* cont);
     Container* child_by_id(std::string id);
+    Container* find_focused(Point pos);
     void on_resize(Container* parent) override;
     void on_update(Container* parent) override;
     void on_draw(Container* parent) override;
