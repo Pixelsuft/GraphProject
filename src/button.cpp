@@ -30,7 +30,7 @@ void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     real_hovered = has_mouse_collision(parent, pos);
     fade.start(fade.cur_color, down ? down_color : hover_color, 0.1f);
     if (!down && real_hovered && onClick) {
-        onClick(this);
+        onClick(this, parent);
     }
 }
 
@@ -48,7 +48,7 @@ void Button::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
     }
 }
 
-Button* Button::set_click_handler(std::function<void(Button*)> handler) {
+Button* Button::set_click_handler(std::function<void(Button*, Container*)> handler) {
     onClick = std::move(handler);
     return this;
 }

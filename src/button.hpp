@@ -5,7 +5,7 @@
 #include <functional>
 
 class Button final : public Container {
-    std::function<void(Button*)> onClick;
+    std::function<void(Button*, Container*)> onClick;
 
 public:
     ColorFade fade;
@@ -22,6 +22,6 @@ public:
     void on_mouse_enter(Container* parent, Point pos, bool entered) override;
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;
     void on_mouse_move(Container* parent, Point pos, Point dp, bool holding) override;
-    Button* set_click_handler(std::function<void(Button*)> handler);
+    Button* set_click_handler(std::function<void(Button*, Container*)> handler);
     void refresh_color();
 };

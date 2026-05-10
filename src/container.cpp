@@ -6,7 +6,7 @@ Container::~Container() {}
 
 void Container::on_resize(Container* parent) {
     if (onResize)
-        onResize(this);
+        onResize(this, parent);
 }
 
 void Container::on_update(Container* parent) {}
@@ -31,7 +31,7 @@ Container* Container::set_rect(Rect new_rect) {
     return this;
 }
 
-Container* Container::set_resize_handler(std::function<void(Container*)> handler) {
+Container* Container::set_resize_handler(std::function<void(Container*, Container*)> handler) {
     onResize = std::move(handler);
     return this;
 }
