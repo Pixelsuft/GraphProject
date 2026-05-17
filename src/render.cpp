@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "render.hpp"
 #include "window.hpp"
 #include <SDL3/SDL.h>
@@ -61,11 +62,27 @@ void Render::clear(Color col) {
 void Render::draw_line(Point start, Point end, Color col) {
     if (col.a <= 0.f)
         return;
-    Point real_start = start + offset;
-    Point real_end = end + offset;
+    start += offset;
+    end += offset;
     SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
     SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-    SDL_RenderLine(handle, real_start.x, real_start.y, real_end.x, real_end.y);
+    SDL_RenderLine(handle, start.x, start.y, end.x, end.y);
+}
+
+void Render::draw_arrow(Point start, Point end, Color col) {
+    if (col.a <= 0.f || start == end)
+        return;
+    start += offset;
+    end += offset;
+    Point line_end = end - start;
+    line_end = line_end / line_end.get_length() * -15.f + end;
+    Point rotated1 = line_end.rotate_point(end, static_cast<float>(M_PI) / 4.f);
+    Point rotated2 = line_end.rotate_point(end, -static_cast<float>(M_PI) / 4.f);
+    SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
+    SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+    SDL_RenderLine(handle, start.x, start.y, end.x, end.y);
+    SDL_RenderLine(handle, rotated1.x, rotated1.y, end.x, end.y);
+    SDL_RenderLine(handle, rotated2.x, rotated2.y, end.x, end.y);
 }
 
 void Render::fill_rect(Rect rect, Color col) {

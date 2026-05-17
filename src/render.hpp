@@ -21,6 +21,7 @@ public:
     void set_scale_enabled(bool enabled);
     void clear(Color col);
     void draw_line(Point start, Point end, Color col);
+    void draw_arrow(Point start, Point end, Color col);
     void fill_rect(Rect rect, Color col);
     void draw_rect(Rect rect, Color col);
     void fill_circle(Point center, float radius, Color col);

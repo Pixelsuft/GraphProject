@@ -9,7 +9,11 @@ struct Point {
     Point() noexcept : x(0.f), y(0.f) {}
     Point(float x, float y) noexcept : x(x), y(y) {}
 
+    bool operator==(const Point& other) const noexcept { return x == other.x && y == other.y; }
+    bool operator!=(const Point& other) const noexcept { return !(*this == other); }
+
     inline float get_angle(Point base) { return SDL_atan2f(y - base.y, x - base.x); }
+    inline float get_length() { return SDL_sqrtf(x * x + y * y); }
     inline Point rotate_point(Point pivot, float angle) {
         float s = SDL_sinf(angle);
         float c = SDL_cosf(angle);
@@ -56,6 +60,11 @@ struct Rect {
 
     Rect() noexcept : x(0.f), y(0.f), w(0.f), h(0.f) {}
     Rect(float x, float y, float w, float h) noexcept : x(x), y(y), w(w), h(h) {}
+
+    bool operator==(const Rect& other) const noexcept {
+        return x == other.x && y == other.y && w == other.w && h == other.h;
+    }
+    bool operator!=(const Rect& other) const noexcept { return !(*this == other); }
 
     Rect operator+(const Point& p) const { return {x + p.x, y + p.y, w, h}; }
     Rect operator-(const Point& p) const { return {x - p.x, y - p.y, w, h}; }

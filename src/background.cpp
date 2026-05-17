@@ -31,7 +31,8 @@ void Background::on_mouse_down(Container* parent, Point pos, uint8_t index, bool
 
 bool Background::has_mouse_collision(Container* parent, Point pos) { return true; }
 
-Background* Background::set_down_handler(std::function<void(Background*, Container*, Point)> handler) {
+Background*
+Background::set_down_handler(std::function<void(Background*, Container*, Point)> handler) {
     onDown = std::move(handler);
     return this;
 }
