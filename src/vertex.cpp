@@ -44,8 +44,9 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     }
     if (vertex_mode == 2 && !down) {
         Container* focused = f->find_focused(pos);
+        // not bg, not cogwheel, not S, not this
         if (focused != nullptr && focused != f->child[0] && focused != f->child[1] &&
-            focused != this) {
+            focused != f->child[2] && focused != this) {
             Vertex* v = reinterpret_cast<Vertex*>(focused);
             Edge edge;
             edge.end = v;
@@ -53,7 +54,9 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
             edges.push_back(edge);
         }
     }
-    holding = down;
+    // not T
+    if (this != f->child[3])
+        holding = down;
 }
 
 bool Vertex::has_mouse_collision(Container* parent, Point pos) {
