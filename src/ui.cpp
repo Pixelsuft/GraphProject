@@ -70,8 +70,6 @@ bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, Path
 
 std::vector<std::pair<std::vector<Vertex*>, int>> find_ford_paths(Vertex* S, Vertex* T) {
     std::vector<std::pair<std::vector<Vertex*>, int>> result;
-    if (!S || !T || S == T)
-        return {};
 
     while (true) {
         std::unordered_map<Vertex*, PathNode> parent_map;
@@ -230,7 +228,7 @@ void construct_ui() {
                 // push_back might reallocate memory
                 last_vertex = nullptr;
                 last_edge = nullptr;
-                flow->add_child(new Vertex("Vertex_NAME_TODO"))
+                flow->add_child(new Vertex("Vertex_С"))
                     ->set_rect(Rect({pos.x - 20.f, pos.y - 20.f, 40.f, 40.f}));
             }
         })
@@ -243,8 +241,8 @@ void construct_ui() {
         ->set_texture(res->load_texture("cogwheel.png"))
         ->set_rect({0.f, 0.f, 32.f, 32.f});
     // S, T vertexes
-    flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
-    flow->add_child(new Vertex("Vertex_T"))->set_rect({100.f, 150.f, 40.f, 40.f});
+    flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 120.f, 40.f, 40.f});
+    flow->add_child(new Vertex("Vertex_T"))->set_rect({300.f, 300.f, 40.f, 40.f});
 }
 
 void kbd_ui(char key) {
@@ -271,7 +269,7 @@ void kbd_ui(char key) {
 }
 
 void draw_ui() {
-    text->set_text(flow_text, (std::string("Bottleneck: ") + std::to_string(total)).c_str());
+    text->set_text(flow_text, (std::string("Flow: ") + std::to_string(total)).c_str());
     text->draw(flow_text, Point(10.f, 84.f), false);
     if (need_path.empty()) {
         Point need_pos = reinterpret_cast<Vertex*>(flow->child[3])->get_center();
