@@ -5,6 +5,7 @@
 #include "frame.hpp"
 #include "image.hpp"
 #include "res.hpp"
+#include "text.hpp"
 #include "vertex.hpp"
 #include <SDL3/SDL.h>
 #include <algorithm>
@@ -12,12 +13,13 @@
 #include <unordered_map>
 
 TTF_Font* def_font;
+void* flow_text;
 static std::vector<std::pair<std::vector<Vertex*>, int>> need_path;
 static Frame* flow;
 static Image* detail;
 static float timer;
 static int prev_i;
-static bool playing;
+static int total;
 static bool fast;
 
 // Structure to track the traversal path during BFS
@@ -135,11 +137,11 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 
 void construct_ui() {
     def_font = res->load_font("VCR_OSD_MONO.ttf", 24.f);
-    need_path.clear();
+    flow_text = text->create_text(def_font);
+    text->set_color(flow_text, Color(0.f, 1.f, 0.f));
     last_edge = nullptr;
     last_vertex = nullptr;
     vertex_mode = 0;
-    playing = false;
     fast = false;
 
     // Workflow
@@ -186,8 +188,8 @@ void construct_ui() {
             self->visible = false;
             root->child_by_id("Button_Stop")->visible = true;
             std::reverse(need_path.begin(), need_path.end());
-            playing = true;
             timer = 0.f;
+            total = 0;
             prev_i = -1;
 #ifdef _DEBUG
             SDL_Log("Calulated size: %i", static_cast<int>(need_path.size()));
@@ -209,7 +211,6 @@ void construct_ui() {
             self->visible = false;
             root->child_by_id("Button_Start")->visible = true;
             need_path.clear();
-            playing = false;
             for (auto it = flow->child.begin() + 2; it != flow->child.end(); it++) {
                 Vertex* v = reinterpret_cast<Vertex*>(*it);
                 for (auto& edge : v->edges) {
@@ -259,7 +260,7 @@ void kbd_ui(char key) {
             last_vertex->edges.erase(last_vertex->edges.begin() + index);
             last_edge = nullptr;
         }
-    } else if (key == 'r' && !playing) {
+    } else if (key == 'r' && need_path.empty()) {
         auto prev_mode = vertex_mode;
         vertex_mode = 3;
         while (flow->child.size() > 4)
@@ -270,7 +271,9 @@ void kbd_ui(char key) {
 }
 
 void draw_ui() {
-    if (!playing) {
+    text->set_text(flow_text, (std::string("Bottleneck: ") + std::to_string(total)).c_str());
+    text->draw(flow_text, Point(10.f, 84.f), false);
+    if (need_path.empty()) {
         Point need_pos = reinterpret_cast<Vertex*>(flow->child[3])->get_center();
         detail->rect.x = need_pos.x - detail->rect.w / 2.f;
         detail->rect.y = need_pos.y - detail->rect.h / 2.f;
@@ -286,6 +289,7 @@ void draw_ui() {
 
     if (cur_index >= static_cast<int>(cur_track.size()) - 1) {
         bottleneck--;
+        total++;
         if (bottleneck != 0) {
             timer = 0.f;
             prev_i = -1;
@@ -293,8 +297,6 @@ void draw_ui() {
             need_path.pop_back();
             timer = 0.f;
             prev_i = -1;
-            if (need_path.empty())
-                playing = false;
         }
         return;
     }
@@ -316,4 +318,7 @@ void draw_ui() {
     detail->rect.y = need_pos.y - detail->rect.h / 2.f;
 }
 
-void destroy_ui() { TTF_CloseFont(def_font); }
+void destroy_ui() {
+    text->destroy_text(flow_text);
+    TTF_CloseFont(def_font);
+}
