@@ -2,8 +2,8 @@
 #include "clock.hpp"
 #include "frame.hpp"
 #include "render.hpp"
-#include "window.hpp"
 #include "res.hpp"
+#include "window.hpp"
 #include <SDL3/SDL.h>
 
 Window* win;
@@ -50,13 +50,13 @@ bool App::on_event(SDL_Event& ev) {
     case SDL_EVENT_MOUSE_MOTION:
         if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
             root->on_mouse_move(nullptr, Point(ev.motion.x, ev.motion.y),
-                              Point(ev.motion.xrel, ev.motion.yrel), false);
+                                Point(ev.motion.xrel, ev.motion.yrel), false);
         return true;
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
     case SDL_EVENT_MOUSE_BUTTON_UP:
         if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
             root->on_mouse_down(nullptr, Point(ev.button.x, ev.button.y), ev.button.button,
-                              ev.button.down);
+                                ev.button.down);
         return true;
     case SDL_EVENT_WINDOW_MOUSE_ENTER:
         if (!mouse_entered) {
@@ -82,7 +82,9 @@ bool App::on_event(SDL_Event& ev) {
 
 bool App::on_update() {
     gclock->on_update();
+#ifndef _DEBUG
     win->set_title(std::string("FPS: ") + std::to_string(gclock->fps));
+#endif
     ren->clear(Color());
     root->on_update(nullptr);
     ren->set_scale_enabled(true);

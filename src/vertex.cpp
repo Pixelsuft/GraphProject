@@ -23,7 +23,7 @@ void Vertex::clean_other_edges(Container* parent) {
             continue;
         Vertex* v = reinterpret_cast<Vertex*>(*it);
         auto vit = std::find_if(v->edges.begin(), v->edges.end(),
-                                [&](const Edge& e) { return e.end == this; });
+                                [this](const Edge& e) { return e.end == this; });
         if (vit != v->edges.end())
             v->edges.erase(vit);
     }
