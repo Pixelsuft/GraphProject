@@ -261,8 +261,12 @@ void kbd_ui(char key) {
 }
 
 void draw_ui() {
-    if (!playing || need_path.empty())
+    if (!playing) {
+        Point need_pos = reinterpret_cast<Vertex*>(flow->child[3])->get_center();
+        detail->rect.x = need_pos.x - detail->rect.w / 2.f;
+        detail->rect.y = need_pos.y - detail->rect.h / 2.f;
         return;
+    }
     detail->visible = true;
 
     auto& [cur_track, bottleneck] = need_path.back();
