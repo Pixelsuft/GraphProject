@@ -12,7 +12,9 @@
 #include <unordered_map>
 
 TTF_Font* def_font;
-static std::vector<std::vector<Vertex*>> need_path;
+static std::vector<std::pair<std::vector<Vertex*>, int>> need_path;
+static int cur_path_index = 0;
+static int cur_path_cogs = 0;
 static Frame* flow;
 static Image* detail;
 static float timer;
@@ -26,12 +28,10 @@ struct PathNode {
     bool is_forward;
 };
 
-// Helper function to find an augmenting path using BFS (Edmonds-Karp variant of Ford-Fulkerson)
 bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, PathNode>& parent_map) {
     std::queue<Vertex*> q;
     q.push(S);
 
-    // Track visited vertices to avoid cycles
     std::unordered_map<Vertex*, bool> visited;
     visited[S] = true;
 
@@ -39,114 +39,87 @@ bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, Path
         Vertex* u = q.front();
         q.pop();
 
-        if (u == T) {
+        if (u == T)
             return true;
-        }
 
-        // 1. Check forward edges (residual capacity > 0)
-        for (Edge& edge : u->edges) {
-            Vertex* v = edge.end;
-            int residual_capacity = edge.weight - edge.flow;
-
-            if (!visited[v] && residual_capacity > 0) {
+        // ----- forward edges (residual capacity > 0) -----
+        for (Edge& e : u->edges) {
+            Vertex* v = e.end;
+            int residual = e.weight - e.flow;
+            if (!visited[v] && residual > 0) {
                 visited[v] = true;
-                parent_map[v] = {u, &edge, true};
+                parent_map[v] = {u, &e, true};
                 q.push(v);
             }
         }
 
-        // 2. Check backward edges (flow > 0 can be pushed back)
-        // Since we don't have a global vertex list, we look at u's edges,
-        // find their reverse links, and treat the owners of those reverse links as parents.
-        for (Edge& edge : u->edges) {
-            Edge* rev_edge = u->find_reverse(&edge);
-            if (rev_edge) {
-                // If rev_edge exists, it means there is an edge from 'v' to 'u'
-                // We need to find the vertex 'v' that owns 'rev_edge'
-                // This requires a reverse lookup or assumption that find_reverse handles it.
-                // Assuming standard flow networks, we can find backward paths via flow redirection.
+        // ----- backward edges (reverse edge has flow > 0) -----
+        for (Edge& e : u->edges) {
+            Vertex* v = e.end;
+            Edge* rev = v->find_reverse(&e); // edge v → u
+            if (rev && rev->flow > 0 && !visited[v]) {
+                visited[v] = true;
+                parent_map[v] = {u, rev, false}; // taking the reverse edge backwards
+                q.push(v);
             }
         }
     }
     return false;
 }
 
-// Main Ford-Fulkerson algorithm function
-std::vector<std::vector<Vertex*>> find_ford_paths(Vertex* S, Vertex* T) {
-    std::vector<std::vector<Vertex*>> all_paths;
+std::vector<std::pair<std::vector<Vertex*>, int>> find_ford_paths(Vertex* S, Vertex* T) {
+    std::vector<std::pair<std::vector<Vertex*>, int>> result;
 
-    // Boundary check: invalid pointers or source equals sink
-    if (!S || !T || S == T) {
+    if (!S || !T || S == T)
         return {};
-    }
 
-    // Reset all flows to 0 before starting the algorithm
-    // (Assuming execution starts fresh; if graph has existing flow, skip this or adapt)
+    // Reset flows (fresh start)
+    // (In this program we assume the graph is rebuilt for each run.)
 
     while (true) {
         std::unordered_map<Vertex*, PathNode> parent_map;
+        if (!find_augmenting_path(S, T, parent_map))
+            break;
 
-        // Find an augmenting path using BFS
-        if (!find_augmenting_path(S, T, parent_map)) {
-            break; // No more paths reachable from S to T
-        }
-
-        // First pass: Find the bottleneck capacity along the discovered path
-        int bottleneck = static_cast<int>(1e9); // Initialize with a large infinity value
+        // ----- find bottleneck -----
+        int bottleneck = INT_MAX;
         Vertex* curr = T;
-
         while (curr != S) {
-            PathNode node = parent_map[curr];
-            if (node.is_forward) {
-                bottleneck = std::min(bottleneck, node.edge_taken->weight - node.edge_taken->flow);
-            } else {
-                // Backward edge capacity is the current flow
-                bottleneck = std::min(bottleneck, node.edge_taken->flow);
-            }
-            curr = node.current;
+            PathNode& pn = parent_map[curr];
+            if (pn.is_forward)
+                bottleneck = std::min(bottleneck, pn.edge_taken->weight - pn.edge_taken->flow);
+            else
+                bottleneck = std::min(
+                    bottleneck, pn.edge_taken->flow); // backward capacity = flow of reverse edge
+            curr = pn.current;
         }
 
-        // Second pass: Update capacities and build the path sequence
-        std::vector<Vertex*> current_path;
+        // ----- update flows & collect path -----
+        std::vector<Vertex*> path;
         curr = T;
-
         while (curr != S) {
-            current_path.push_back(curr);
-            PathNode node = parent_map[curr];
+            path.push_back(curr);
+            PathNode& pn = parent_map[curr];
 
-            if (node.is_forward) {
-                node.edge_taken->flow += bottleneck;
-                // Update reverse edge if it exists
-                Edge* rev = curr->find_reverse(node.edge_taken);
-                if (rev) {
+            if (pn.is_forward) {
+                pn.edge_taken->flow += bottleneck;
+                Edge* rev = curr->find_reverse(pn.edge_taken);
+                if (rev)
                     rev->flow -= bottleneck;
-                }
             } else {
-                node.edge_taken->flow -= bottleneck;
-                Edge* rev = curr->find_reverse(node.edge_taken);
-                if (rev) {
-                    rev->flow += bottleneck;
-                }
+                pn.edge_taken->flow -= bottleneck; // the reverse edge we took
+                Edge* rev = curr->find_reverse(pn.edge_taken);
+                if (rev)
+                    rev->flow += bottleneck; // the original forward edge
             }
-            curr = node.current;
+            curr = pn.current;
         }
+        path.push_back(S);
+        std::reverse(path.begin(), path.end());
 
-        // Add source vertex to complete the path
-        current_path.push_back(S);
-
-        // Reverse path since we backtracked from T to S
-        std::reverse(current_path.begin(), current_path.end());
-
-        // Save this iteration's path
-        all_paths.push_back(current_path);
+        result.emplace_back(std::move(path), bottleneck);
     }
-
-    // Return empty vector if no path could ever reach T from S
-    if (all_paths.empty()) {
-        return {};
-    }
-
-    return all_paths;
+    return result;
 }
 
 static void set_selected_button(Container* btn, bool enabled = true) {
@@ -221,7 +194,8 @@ void construct_ui() {
 #ifdef _DEBUG
             SDL_Log("Calulated size: %i", static_cast<int>(need_path.size()));
             for (auto& cog : need_path) {
-                SDL_Log(" - Cog path size: %i", static_cast<int>(cog.size()));
+                SDL_Log(" - Cog path size: %i (repeat x%i)", static_cast<int>(cog.first.size()),
+                        cog.second);
             }
 #endif
         })
@@ -246,6 +220,8 @@ void construct_ui() {
                     edge.update_text();
                 }
             }
+            cur_path_index = 0;
+            cur_path_cogs = 0;
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     root->child_by_id("Button_Stop")->visible = false;
@@ -291,26 +267,49 @@ void kbd_ui(char key) {
 }
 
 void draw_ui() {
-    if (!playing)
+    if (!playing || need_path.empty())
         return;
     detail->visible = true;
-    auto& cur_track = need_path.back();
-    timer += gclock->dt; // TODO: allow changing speed
+
+    auto& [cur_track, bottleneck] = need_path[cur_path_index];
+
+    timer += gclock->dt;
     int cur_index = static_cast<int>(timer);
-    float perc = timer - static_cast<float>(cur_index);
+    float perc   = timer - static_cast<float>(cur_index);
+
+    // Finished a single cog's journey along this path?
     if (cur_index >= cur_track.size() - 1) {
-        timer = 0.f;
-        prev_i = -1;
-        need_path.pop_back();
-        if (need_path.empty())
-            playing = false;
-        return;
+        cur_path_cogs++;
+
+        if (cur_path_cogs < bottleneck) {
+            // Replay the same path for another cog
+            timer = 0.f;
+            prev_i = -1;
+            return;
+        } else {
+            // Move to the next path
+            cur_path_index++;
+            cur_path_cogs = 0;
+            timer = 0.f;
+            prev_i = -1;
+
+            if (cur_path_index >= need_path.size()) {
+                playing = false;
+                return;
+            }
+            // We'll use the new path in the next frame
+            return;
+        }
     }
+
+    // Update edge usage and cogwheel position (unchanged logic)
     if (prev_i != cur_index) {
         prev_i = cur_index;
         Edge* e = cur_track[cur_index]->find_connection(cur_track[cur_index + 1]);
-        e->used++;
-        e->update_text();
+        if (e) {
+            e->used++;
+            e->update_text();
+        }
     }
     Point start = cur_track[cur_index]->get_center();
     Point route = cur_track[cur_index + 1]->get_center() - start;
