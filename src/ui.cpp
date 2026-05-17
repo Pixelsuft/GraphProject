@@ -185,7 +185,7 @@ void construct_ui() {
             set_selected_button(self, false);
             self->visible = false;
             root->child_by_id("Button_Stop")->visible = true;
-            // std::reverse(need_path.begin(), need_path.end());
+            std::reverse(need_path.begin(), need_path.end());
             timer = 0.f;
             total = 0;
             prev_i = -1;
