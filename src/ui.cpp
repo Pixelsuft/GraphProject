@@ -21,7 +21,7 @@ static float timer;
 static int prev_i;
 static bool playing;
 
-// Structure to track the traversal path during BFS/DFS
+// Structure to track the traversal path during BFS
 struct PathNode {
     Vertex* current;
     Edge* edge_taken;
@@ -42,7 +42,7 @@ bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, Path
         if (u == T)
             return true;
 
-        // ----- forward edges (residual capacity > 0) -----
+        // Forward edges (residual capacity > 0)
         for (Edge& e : u->edges) {
             Vertex* v = e.end;
             int residual = e.weight - e.flow;
@@ -53,13 +53,13 @@ bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, Path
             }
         }
 
-        // ----- backward edges (reverse edge has flow > 0) -----
+        // Backward edges (reverse edge has flow > 0)
         for (Edge& e : u->edges) {
             Vertex* v = e.end;
-            Edge* rev = v->find_reverse(&e); // edge v → u
+            Edge* rev = v->find_reverse(&e); // Edge v -> u
             if (rev && rev->flow > 0 && !visited[v]) {
                 visited[v] = true;
-                parent_map[v] = {u, rev, false}; // taking the reverse edge backwards
+                parent_map[v] = {u, rev, false}; // Taking the reverse edge backwards
                 q.push(v);
             }
         }
@@ -69,19 +69,15 @@ bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, Path
 
 std::vector<std::pair<std::vector<Vertex*>, int>> find_ford_paths(Vertex* S, Vertex* T) {
     std::vector<std::pair<std::vector<Vertex*>, int>> result;
-
     if (!S || !T || S == T)
         return {};
-
-    // Reset flows (fresh start)
-    // (In this program we assume the graph is rebuilt for each run.)
 
     while (true) {
         std::unordered_map<Vertex*, PathNode> parent_map;
         if (!find_augmenting_path(S, T, parent_map))
             break;
 
-        // ----- find bottleneck -----
+        // Find bottleneck
         int bottleneck = INT_MAX;
         Vertex* curr = T;
         while (curr != S) {
@@ -94,7 +90,7 @@ std::vector<std::pair<std::vector<Vertex*>, int>> find_ford_paths(Vertex* S, Ver
             curr = pn.current;
         }
 
-        // ----- update flows & collect path -----
+        // Update flows and collect path
         std::vector<Vertex*> path;
         curr = T;
         while (curr != S) {
@@ -107,10 +103,10 @@ std::vector<std::pair<std::vector<Vertex*>, int>> find_ford_paths(Vertex* S, Ver
                 if (rev)
                     rev->flow -= bottleneck;
             } else {
-                pn.edge_taken->flow -= bottleneck; // the reverse edge we took
+                pn.edge_taken->flow -= bottleneck; // The reverse edge we took
                 Edge* rev = curr->find_reverse(pn.edge_taken);
                 if (rev)
-                    rev->flow += bottleneck; // the original forward edge
+                    rev->flow += bottleneck; // The original forward edge
             }
             curr = pn.current;
         }
@@ -181,14 +177,16 @@ void construct_ui() {
         ->set_click_handler([&](Button* self, Container*) {
             last_edge = nullptr;
             vertex_mode = 0;
-            set_selected_button(self, false);
-            self->visible = false;
-            root->child_by_id("Button_Stop")->visible = true;
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
             need_path = std::move(find_ford_paths(s_v, t_v));
+            if (need_path.empty())
+                return;
+            set_selected_button(self, false);
+            self->visible = false;
+            root->child_by_id("Button_Stop")->visible = true;
             std::reverse(need_path.begin(), need_path.end());
-            playing = !need_path.empty();
+            playing = true;
             timer = 0.f;
             prev_i = -1;
 #ifdef _DEBUG
@@ -275,7 +273,7 @@ void draw_ui() {
 
     timer += gclock->dt;
     int cur_index = static_cast<int>(timer);
-    float perc   = timer - static_cast<float>(cur_index);
+    float perc = timer - static_cast<float>(cur_index);
 
     // Finished a single cog's journey along this path?
     if (cur_index >= cur_track.size() - 1) {
