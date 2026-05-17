@@ -10,7 +10,7 @@
 static Frame* flow;
 static Image* detail;
 
-static void set_selected_button(Container* btn) {
+static void set_selected_button(Container* btn, bool enabled = true) {
     // Hacky way to allow toggle
     if (reinterpret_cast<Button*>(btn)->bg_color.g != 0.f)
         vertex_mode = 0;
@@ -18,6 +18,10 @@ static void set_selected_button(Container* btn) {
          {"Button_Add", "Button_Join", "Button_Trash", "Button_Start", "Button_Stop"}) {
         Button* b = reinterpret_cast<Button*>(root->child_by_id(id));
         b->bg_color.g = (btn != b || vertex_mode == 0) ? 0.f : 0.2f;
+        if (b->id != "Button_Start" && b->id != "Button_Stop") {
+            b->enabled = enabled;
+            b->border_color = enabled ? Color(0.f, 1.f, 0.f) : Color(1.f, 0.f, 0.f);
+        }
         b->refresh_color();
     }
 }
@@ -59,8 +63,10 @@ void construct_ui() {
         ->set_child((new Image("Image_Start"))->set_texture(res->load_texture("start.png")))
         ->set_click_handler([&](Button* self, Container*) {
             vertex_mode = 0;
-            set_selected_button(self);
+            set_selected_button(self, false);
             detail->visible = true;
+            self->visible = false;
+            root->child_by_id("Button_Stop")->visible = true;
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     // Stop button
@@ -68,10 +74,13 @@ void construct_ui() {
         ->set_child((new Image("Image_Stop"))->set_texture(res->load_texture("stop.png")))
         ->set_click_handler([&](Button* self, Container*) {
             vertex_mode = 0;
-            set_selected_button(self);
+            set_selected_button(self, true);
             detail->visible = false;
+            self->visible = false;
+            root->child_by_id("Button_Start")->visible = true;
         })
-        ->set_rect({306.f, 10.f, 64.f, 64.f});
+        ->set_rect({232.f, 10.f, 64.f, 64.f});
+    root->child_by_id("Button_Stop")->visible = false;
 
     // Background
     flow->add_child(new Background("Background"))

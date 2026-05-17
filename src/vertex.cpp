@@ -2,6 +2,7 @@
 #include "frame.hpp"
 #include "render.hpp"
 #include <SDL3/SDL.h>
+#include <algorithm>
 
 int vertex_mode;
 
@@ -14,6 +15,19 @@ Vertex::Vertex(std::string id) : Container(id) {
 }
 
 Vertex::~Vertex() {}
+
+void Vertex::clean_other_edges(Container* parent) {
+    Frame* f = reinterpret_cast<Frame*>(parent);
+    for (auto it = f->child.begin() + 2; it != f->child.end() - 1; it++) {
+        if (*it == this)
+            continue;
+        Vertex* v = reinterpret_cast<Vertex*>(*it);
+        auto vit = std::find_if(v->edges.begin(), v->edges.end(),
+                                [&](const Edge& e) { return e.end == this; });
+        if (vit != v->edges.end())
+            v->edges.erase(vit);
+    }
+}
 
 void Vertex::on_draw(Container* parent) {
     float r = rect.w / 2.f;
@@ -40,23 +54,31 @@ void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
 void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
     Frame* f = reinterpret_cast<Frame*>(parent);
     if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
+        clean_other_edges(parent);
         f->remove_child(this);
     }
+    // not T
+    if (this == f->child[3])
+        return;
     if (vertex_mode == 2 && !down) {
         Container* focused = f->find_focused(pos);
         // not bg, not cogwheel, not S, not this
         if (focused != nullptr && focused != f->child[0] && focused != f->child[1] &&
             focused != f->child[2] && focused != this) {
             Vertex* v = reinterpret_cast<Vertex*>(focused);
-            Edge edge;
-            edge.end = v;
-            edge.weight = 1;
-            edges.push_back(edge);
+            auto it = std::find_if(edges.begin(), edges.end(),
+                                   [&v](const Edge& e) { return e.end == v; });
+            if (it == edges.end()) {
+                Edge edge;
+                edge.end = v;
+                edge.weight = 1;
+                edges.push_back(edge);
+            } else {
+                it->weight++;
+            }
         }
     }
-    // not T
-    if (this != f->child[3])
-        holding = down;
+    holding = down;
 }
 
 bool Vertex::has_mouse_collision(Container* parent, Point pos) {

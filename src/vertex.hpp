@@ -26,6 +26,7 @@ public:
     Vertex(std::string id);
     ~Vertex() override;
     inline Point get_center() { return rect.as_point() + rect.as_size() / 2.f; }
+    void clean_other_edges(Container* parent);
     void on_draw(Container* parent) override;
     void on_mouse_move(Container* parent, Point pos, Point dp, bool holding) override;
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;

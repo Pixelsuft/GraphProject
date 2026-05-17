@@ -25,6 +25,8 @@ void Button::on_update(Container* parent) {
 }
 
 void Button::on_draw(Container* parent) {
+    if (!visible)
+        return;
     ren->fill_rect(rect, fade.cur_color);
     if (child)
         child->on_draw(parent);
@@ -42,6 +44,8 @@ void Button::on_mouse_enter(Container* parent, Point pos, bool entered) {
 }
 
 void Button::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
+    if (down && (!visible || !enabled))
+        return;
     real_hovered = has_mouse_collision(parent, pos);
     fade.start(fade.cur_color, down ? down_color : hover_color, 0.1f);
     if (!down && real_hovered && onClick) {
