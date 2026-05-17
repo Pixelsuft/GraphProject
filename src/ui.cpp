@@ -255,6 +255,7 @@ void kbd_ui(char key) {
             last_edge->update_text();
         } else {
             auto index = last_edge - last_vertex->edges.data();
+            last_edge->destroy();
             last_vertex->edges.erase(last_vertex->edges.begin() + index);
             last_edge = nullptr;
         }

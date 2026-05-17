@@ -46,6 +46,7 @@ Vertex::~Vertex() {
         last_vertex = nullptr;
         last_edge = nullptr;
     }
+    // FIXME: not cleaning edges when destroying via frame
 }
 
 Edge* Vertex::find_reverse(Edge* target) {

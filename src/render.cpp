@@ -55,8 +55,6 @@ void Render::set_scale_enabled(bool enabled) {
 void Render::present() { SDL_RenderPresent(handle); }
 
 void Render::clear(Color col) {
-    if (col.a <= 0.f)
-        return;
     SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
     SDL_RenderClear(handle);
 }
