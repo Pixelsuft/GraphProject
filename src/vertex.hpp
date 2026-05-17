@@ -10,10 +10,15 @@ class Vertex;
 
 struct Edge {
     Vertex* end;
+    void* info;
     int weight;
     int used;
 
-    Edge() : end(nullptr), weight(0), used(0) {}
+    Edge();
+    // Fuck RAII :)
+    void init(Vertex* e);
+    void destroy();
+    void update_text();
 };
 
 class Vertex final : public Container {

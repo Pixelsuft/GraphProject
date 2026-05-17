@@ -17,6 +17,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     if (!app->is_inited()) {
         TTF_Quit();
         SDL_Quit();
+        delete app;
         return SDL_APP_FAILURE;
     }
     construct_ui();
@@ -37,6 +38,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 
 void SDL_AppQuit(void* appstate, SDL_AppResult result) {
     if (result != SDL_APP_FAILURE) {
+        destroy_ui();
         App* app = reinterpret_cast<App*>(appstate);
         delete app;
         TTF_Quit();

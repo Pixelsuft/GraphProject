@@ -1,10 +1,24 @@
 #include "vertex.hpp"
 #include "frame.hpp"
 #include "render.hpp"
+#include "text.hpp"
 #include <SDL3/SDL.h>
 #include <algorithm>
 
+extern TTF_Font* def_font;
 int vertex_mode;
+
+Edge::Edge() : end(nullptr), info(nullptr), weight(1), used(0) {}
+
+void Edge::init(Vertex* e) {
+    info = text->create_text(def_font);
+    end = e;
+    update_text();
+}
+
+void Edge::destroy() { text->destroy_text(info); }
+
+void Edge::update_text() {}
 
 Vertex::Vertex(std::string id) : Container(id) {
     color = Color(0.f, 1.f, 0.f, 0.5f);
@@ -18,14 +32,16 @@ Vertex::~Vertex() {}
 
 void Vertex::clean_other_edges(Container* parent) {
     Frame* f = reinterpret_cast<Frame*>(parent);
-    for (auto it = f->child.begin() + 2; it != f->child.end() - 1; it++) {
+    for (auto it = f->child.begin() + 2; it != f->child.end(); it++) {
         if (*it == this)
             continue;
         Vertex* v = reinterpret_cast<Vertex*>(*it);
         auto vit = std::find_if(v->edges.begin(), v->edges.end(),
                                 [this](const Edge& e) { return e.end == this; });
-        if (vit != v->edges.end())
+        if (vit != v->edges.end()) {
+            vit->destroy();
             v->edges.erase(vit);
+        }
     }
 }
 
@@ -56,6 +72,7 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
     if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
         clean_other_edges(parent);
         f->remove_child(this);
+        return;
     }
     // not T
     if (this == f->child[3])
@@ -69,12 +86,11 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
             auto it = std::find_if(edges.begin(), edges.end(),
                                    [&v](const Edge& e) { return e.end == v; });
             if (it == edges.end()) {
-                Edge edge;
-                edge.end = v;
-                edge.weight = 1;
-                edges.push_back(edge);
+                edges.push_back(Edge());
+                edges.back().init(v);
             } else {
                 it->weight++;
+                it->update_text();
             }
         }
     }

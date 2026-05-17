@@ -73,7 +73,10 @@ SDL_Surface* Res::load_surface(std::string fn) {
     return ret;
 }
 
-static Texture create_texture_fallback() { return Texture(); }
+static Texture create_texture_fallback() {
+    // TODO
+    return Texture();
+}
 
 Texture Res::load_texture(std::string fn) {
     SDL_Surface* surf = load_surface(fn);
@@ -89,6 +92,10 @@ Texture Res::load_texture(std::string fn) {
     SDL_DestroySurface(surf);
 
     return tex.handle ? tex : create_texture_fallback();
+}
+
+TTF_Font* Res::load_font(std::string fn, float size) {
+    return TTF_OpenFontIO(open_stream(fn), true, size);
 }
 
 Res::Res() {}

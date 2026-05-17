@@ -152,6 +152,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render.cpp" />
     <ClCompile Include="src\res.cpp" />
+    <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\upng.cpp" />
     <ClCompile Include="src\vertex.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="src\rect.hpp" />
     <ClInclude Include="src\render.hpp" />
     <ClInclude Include="src\res.hpp" />
+    <ClInclude Include="src\text.hpp" />
     <ClInclude Include="src\texture.hpp" />
     <ClInclude Include="src\ui.hpp" />
     <ClInclude Include="src\upng.hpp" />

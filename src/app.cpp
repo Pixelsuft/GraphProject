@@ -3,19 +3,22 @@
 #include "frame.hpp"
 #include "render.hpp"
 #include "res.hpp"
+#include "text.hpp"
 #include "window.hpp"
 #include <SDL3/SDL.h>
 
 Window* win;
 Render* ren;
+TextEngine* text;
 Frame* root;
 Clock* gclock;
 Res* res;
 
 App::App() {
-    res = new Res;
+    res = new Res();
     win = new Window();
     ren = new Render(win->get_handle());
+    text = new TextEngine(ren->get_handle());
     if (!is_inited())
         return;
     gclock = new Clock();
@@ -29,12 +32,13 @@ App::~App() {
         delete root;
         delete gclock;
     }
+    delete text;
     delete ren;
     delete win;
     delete res;
 }
 
-bool App::is_inited() { return win->is_inited() && ren->is_inited(); }
+bool App::is_inited() { return win->is_inited() && ren->is_inited() && text->is_inited(); }
 
 void App::on_resize() {
     win->on_resize();

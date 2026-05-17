@@ -9,6 +9,7 @@
 
 static Frame* flow;
 static Image* detail;
+TTF_Font* def_font;
 
 static void set_selected_button(Container* btn, bool enabled = true) {
     // Hacky way to allow toggle
@@ -27,6 +28,7 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 }
 
 void construct_ui() {
+    def_font = res->load_font("VCR_OSD_MONO.ttf", 32.f);
     vertex_mode = 0;
 
     // Workflow
@@ -102,3 +104,5 @@ void construct_ui() {
     flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
     flow->add_child(new Vertex("Vertex_T"))->set_rect({100.f, 150.f, 40.f, 40.f});
 }
+
+void destroy_ui() { TTF_CloseFont(def_font); }
