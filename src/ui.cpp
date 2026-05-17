@@ -209,7 +209,6 @@ void construct_ui() {
             last_edge = nullptr;
             vertex_mode = 0;
             set_selected_button(self, false);
-            detail->visible = true;
             self->visible = false;
             root->child_by_id("Button_Stop")->visible = true;
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
@@ -294,6 +293,7 @@ void kbd_ui(char key) {
 void draw_ui() {
     if (!playing)
         return;
+    detail->visible = true;
     auto& cur_track = need_path.back();
     timer += gclock->dt; // TODO: allow changing speed
     int cur_index = static_cast<int>(timer);
