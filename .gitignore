@@ -19,6 +19,5 @@ nul
 *.gz
 *.xz
 *.exe
-*.dll
 *.csv
 *.pdb
