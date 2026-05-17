@@ -215,13 +215,6 @@ void construct_ui() {
             root->child_by_id("Button_Stop")->visible = true;
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
-            for (auto it = flow->child.begin() + 2; it != flow->child.end(); it++) {
-                Vertex* v = reinterpret_cast<Vertex*>(*it);
-                for (auto& edge : v->edges) {
-                    edge.flow = 0;
-                    edge.used = 0;
-                }
-            }
             need_path = std::move(find_ford_paths(s_v, t_v));
             playing = !need_path.empty();
             timer = 0.f;
@@ -247,6 +240,14 @@ void construct_ui() {
             root->child_by_id("Button_Start")->visible = true;
             need_path.clear();
             playing = false;
+            for (auto it = flow->child.begin() + 2; it != flow->child.end(); it++) {
+                Vertex* v = reinterpret_cast<Vertex*>(*it);
+                for (auto& edge : v->edges) {
+                    edge.flow = 0;
+                    edge.used = 0;
+                    edge.update_text();
+                }
+            }
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     root->child_by_id("Button_Stop")->visible = false;
@@ -295,7 +296,7 @@ void draw_ui() {
     if (!playing)
         return;
     auto& cur_track = need_path[index];
-    timer += gclock->dt; // TODO: change speed
+    timer += gclock->dt; // TODO: allow changing speed
     int cur_index = static_cast<int>(timer);
     float perc = timer - static_cast<float>(cur_index);
     if (cur_index >= cur_track.size() - 1) {
