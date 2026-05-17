@@ -176,12 +176,12 @@ void construct_ui() {
         ->set_child((new Image("Image_Start"))->set_texture(res->load_texture("start.png")))
         ->set_click_handler([&](Button* self, Container*) {
             last_edge = nullptr;
-            vertex_mode = 0;
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
             need_path = std::move(find_ford_paths(s_v, t_v));
             if (need_path.empty())
                 return;
+            vertex_mode = 0;
             set_selected_button(self, false);
             self->visible = false;
             root->child_by_id("Button_Stop")->visible = true;
