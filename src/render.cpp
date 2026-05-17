@@ -146,7 +146,17 @@ void Render::draw_texture(Point pos, Texture texture) {
     SDL_RenderTexture(handle, texture.handle, nullptr, &dst);
 }
 
+void Render::draw_texture_rotated(Point pos, double rot, Texture texture) {
+    SDL_FRect dst = {pos.x + offset.x, pos.y + offset.y, texture.size.x, texture.size.y};
+    SDL_RenderTextureRotated(handle, texture.handle, nullptr, &dst, rot, nullptr, SDL_FLIP_NONE);
+}
+
 void Render::draw_texture_sized(Rect rect, Texture texture) {
     SDL_FRect dst = {rect.x + offset.x, rect.y + offset.y, rect.w, rect.h};
     SDL_RenderTexture(handle, texture.handle, nullptr, &dst);
+}
+
+void Render::draw_texture_sized_rotated(Rect rect, double rot, Texture texture) {
+    SDL_FRect dst = {rect.x + offset.x, rect.y + offset.y, rect.w, rect.h};
+    SDL_RenderTextureRotated(handle, texture.handle, nullptr, &dst, rot, nullptr, SDL_FLIP_NONE);
 }

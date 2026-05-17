@@ -5,6 +5,7 @@
 class Image final : public Container {
 public:
     Texture tex;
+    double rot;
     bool stretch;
 
     Image(std::string id, bool stretch = false);

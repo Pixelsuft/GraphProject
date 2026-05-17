@@ -279,6 +279,9 @@ void draw_ui() {
         return;
     }
     detail->visible = true;
+    detail->rot += gclock->dt * 360.0 * 20.0;
+    if (detail->rot >= 360.0)
+        detail->rot -= 360.0;
 
     auto& [cur_track, bottleneck] = need_path.back();
 

@@ -26,7 +26,9 @@ public:
     void draw_rect(Rect rect, Color col);
     void fill_circle(Point center, float radius, Color col);
     void draw_texture(Point pos, Texture texture);
+    void draw_texture_rotated(Point pos, double rot, Texture texture);
     void draw_texture_sized(Rect rect, Texture texture);
+    void draw_texture_sized_rotated(Rect rect, double rot, Texture texture);
 };
 
 extern Render* ren;
