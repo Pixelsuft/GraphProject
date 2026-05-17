@@ -67,6 +67,7 @@ void construct_ui() {
     root->add_child(new Button("Button_Start"))
         ->set_child((new Image("Image_Start"))->set_texture(res->load_texture("start.png")))
         ->set_click_handler([&](Button* self, Container*) {
+            last_edge = nullptr;
             vertex_mode = 0;
             set_selected_button(self, false);
             detail->visible = true;
@@ -78,6 +79,7 @@ void construct_ui() {
     root->add_child(new Button("Button_Stop"))
         ->set_child((new Image("Image_Stop"))->set_texture(res->load_texture("stop.png")))
         ->set_click_handler([&](Button* self, Container*) {
+            last_edge = nullptr;
             vertex_mode = 0;
             set_selected_button(self, true);
             detail->visible = false;
@@ -123,7 +125,6 @@ void kbd_ui(char key) {
             auto index = last_edge - last_vertex->edges.data();
             last_vertex->edges.erase(last_vertex->edges.begin() + index);
             last_edge = nullptr;
-            last_vertex = nullptr;
         }
     }
 }

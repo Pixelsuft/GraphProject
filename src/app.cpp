@@ -93,7 +93,7 @@ bool App::on_event(SDL_Event& ev) {
 
 bool App::on_update() {
     gclock->on_update();
-#ifndef _DEBUG
+#ifdef _DEBUG
     win->set_title(std::string("FPS: ") + std::to_string(gclock->fps));
 #endif
     ren->clear(Color());

@@ -38,7 +38,13 @@ Vertex::Vertex(std::string id) : Container(id) {
         color = Color(1.f, 0.f, 0.f, 0.5f);
 }
 
-Vertex::~Vertex() {}
+Vertex::~Vertex() {
+    if (last_vertex == this) {
+        // For sure
+        last_vertex = nullptr;
+        last_edge = nullptr;
+    }
+}
 
 void Vertex::clean_other_edges(Container* parent) {
     Frame* f = reinterpret_cast<Frame*>(parent);
@@ -79,7 +85,6 @@ void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
 }
 
 void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
-    last_vertex = nullptr;
     last_edge = nullptr;
     Frame* f = reinterpret_cast<Frame*>(parent);
     if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
