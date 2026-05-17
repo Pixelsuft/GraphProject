@@ -41,12 +41,15 @@ Vertex::Vertex(std::string id) : Container(id), holding_it(false) {
 }
 
 Vertex::~Vertex() {
+    // Hacky
+    for (auto& e : edges)
+        e.destroy();
+    edges.clear();
     if (last_vertex == this) {
         // For sure
         last_vertex = nullptr;
         last_edge = nullptr;
     }
-    // FIXME: not cleaning edges when destroying via frame
 }
 
 Edge* Vertex::find_reverse(Edge* target) {
