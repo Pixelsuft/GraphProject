@@ -109,9 +109,9 @@ void Render::fill_circle(Point center, float radius, Color col) {
     set_scale_enabled(false);
     Point real_center = (center + offset) * scale;
     float r = radius * scale;
-    // TODO: switch to rendering geometry???
     SDL_SetRenderDrawColorFloat(handle, col.r, col.g, col.b, col.a);
     SDL_SetRenderDrawBlendMode(handle, col.a >= 1.f ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+#ifndef __EMSCRIPTEN__
     for (float dy = -r; dy <= r; dy += 1.0f) {
         float dx = SDL_sqrtf(r * r - dy * dy);
         if (dx < 0.1f)
@@ -122,6 +122,28 @@ void Render::fill_circle(Point center, float radius, Color col) {
 
         SDL_RenderLine(handle, x1, y, x2, y);
     }
+#else
+    float r_int = SDL_roundf(r);
+    float cx = SDL_roundf(real_center.x);
+    float cy = SDL_roundf(real_center.y);
+
+    float x = r_int;
+    float y = 0.f;
+    float r2 = r_int * r_int;
+    float def = 0.f;
+
+    SDL_RenderLine(handle, cx - r_int, cy, cx + r_int, cy);
+
+    while (y < r_int) {
+        y++;
+        while ((x * x + y * y) > r2) {
+            x--;
+        }
+
+        SDL_RenderLine(handle, cx - x, cy - y, cx + x, cy - y);
+        SDL_RenderLine(handle, cx - x, cy + y, cx + x, cy + y);
+    }
+#endif
     set_scale_enabled(true);
 }
 
