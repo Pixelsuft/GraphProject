@@ -1,4 +1,5 @@
 #include "text.hpp"
+#include "render.hpp"
 #include "window.hpp"
 
 TextEngine::TextEngine(void* ren_handle) {
@@ -20,4 +21,19 @@ bool TextEngine::is_inited() { return handle != nullptr; }
 
 void* TextEngine::create_text(TTF_Font* font) { return TTF_CreateText(handle, font, "", 0); }
 
-void TextEngine::destroy_text(void* text_obj) { TTF_DestroyText(reinterpret_cast<TTF_Text*>(text_obj)); }
+void TextEngine::destroy_text(void* text_obj) {
+    TTF_DestroyText(reinterpret_cast<TTF_Text*>(text_obj));
+}
+
+void TextEngine::set_text(void* text_obj, const char* s) {
+    TTF_SetTextString(reinterpret_cast<TTF_Text*>(text_obj), s, 0);
+}
+
+void TextEngine::set_color(void* text_obj, Color col) {
+    TTF_SetTextColorFloat(reinterpret_cast<TTF_Text*>(text_obj), col.r, col.g, col.b, col.a);
+}
+
+void TextEngine::draw(void* text_obj, Point pos) {
+    TTF_DrawRendererText(reinterpret_cast<TTF_Text*>(text_obj), pos.x + ren->offset.x,
+                         pos.y + ren->offset.y);
+}

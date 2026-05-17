@@ -1,1 +1,2 @@
 [ ] App version info, icon etc.
+[ ] Fix TODOs inside the code

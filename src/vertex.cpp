@@ -12,13 +12,21 @@ Edge::Edge() : end(nullptr), info(nullptr), weight(1), used(0) {}
 
 void Edge::init(Vertex* e) {
     info = text->create_text(def_font);
+    text->set_color(info, Color(1.f, 1.f, 1.f));
     end = e;
     update_text();
 }
 
 void Edge::destroy() { text->destroy_text(info); }
 
-void Edge::update_text() {}
+void Edge::update_text() {
+    static char buf[32];
+    SDL_itoa(used, buf, 10);
+    size_t len = SDL_strlen(buf);
+    buf[len] = '/';
+    SDL_itoa(weight, buf + len + 1, 10);
+    text->set_text(info, buf);
+}
 
 Vertex::Vertex(std::string id) : Container(id) {
     color = Color(0.f, 1.f, 0.f, 0.5f);
@@ -58,6 +66,7 @@ void Vertex::on_draw(Container* parent) {
             continue;
         Point norm = route / route.get_length();
         ren->draw_arrow(center + norm * r, edge.end->get_center() - norm * r, Color(1.f, 0.f, 0.f));
+        text->draw(edge.info, center + norm * 60.f);
     }
 }
 
