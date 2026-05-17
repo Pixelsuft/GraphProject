@@ -119,27 +119,21 @@ void Render::fill_circle(Point center, float radius, Color col) {
         float x1 = real_center.x - dx;
         float x2 = real_center.x + dx;
         float y = real_center.y + dy;
-
         SDL_RenderLine(handle, x1, y, x2, y);
     }
 #else
     float r_int = SDL_roundf(r);
     float cx = SDL_roundf(real_center.x);
     float cy = SDL_roundf(real_center.y);
-
     float x = r_int;
     float y = 0.f;
     float r2 = r_int * r_int;
-    float def = 0.f;
-
     SDL_RenderLine(handle, cx - r_int, cy, cx + r_int, cy);
-
     while (y < r_int) {
         y++;
         while ((x * x + y * y) > r2) {
             x--;
         }
-
         SDL_RenderLine(handle, cx - x, cy - y, cx + x, cy - y);
         SDL_RenderLine(handle, cx - x, cy + y, cx + x, cy + y);
     }

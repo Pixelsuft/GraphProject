@@ -28,6 +28,7 @@ void Edge::update_text() {
     buf[len] = '/';
     SDL_itoa(weight, buf + len + 1, 10);
     text->set_text(info, buf);
+    text->set_color(info, used == weight ? Color(1.f, 1.f, 0.f) : Color(1.f, 1.f, 1.f));
 }
 
 Vertex::Vertex(std::string id) : Container(id) {

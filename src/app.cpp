@@ -80,6 +80,11 @@ bool App::on_event(SDL_Event& ev) {
             kbd_ui('+');
         else if (ev.key.scancode == SDL_SCANCODE_MINUS || ev.key.scancode == SDL_SCANCODE_KP_MINUS)
             kbd_ui('-');
+        else if (ev.key.scancode == SDL_SCANCODE_R || ev.key.scancode == SDL_SCANCODE_BACKSPACE ||
+                 ev.key.scancode == SDL_SCANCODE_DELETE)
+            kbd_ui('r');
+        else if (ev.key.scancode == SDL_SCANCODE_F)
+            kbd_ui('f');
         return true;
     case SDL_EVENT_WINDOW_RESIZED:
         on_resize();

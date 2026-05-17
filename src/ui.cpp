@@ -18,6 +18,7 @@ static Image* detail;
 static float timer;
 static int prev_i;
 static bool playing;
+static bool fast;
 
 // Structure to track the traversal path during BFS
 struct PathNode {
@@ -139,6 +140,7 @@ void construct_ui() {
     last_vertex = nullptr;
     vertex_mode = 0;
     playing = false;
+    fast = false;
 
     // Workflow
     flow = new Frame("Frame_Flow");
@@ -257,7 +259,14 @@ void kbd_ui(char key) {
             last_vertex->edges.erase(last_vertex->edges.begin() + index);
             last_edge = nullptr;
         }
-    }
+    } else if (key == 'r' && !playing) {
+        auto prev_mode = vertex_mode;
+        vertex_mode = 3;
+        while (flow->child.size() > 4)
+            flow->child.back()->on_mouse_down(flow, Point(), 0, true);
+        vertex_mode = prev_mode;
+    } else if (key == 'f')
+        fast = !fast;
 }
 
 void draw_ui() {
@@ -271,7 +280,7 @@ void draw_ui() {
 
     auto& [cur_track, bottleneck] = need_path.back();
 
-    timer += gclock->dt;
+    timer += gclock->dt * (fast ? 8.f : 1.f);
     int cur_index = static_cast<int>(timer);
     float perc = timer - static_cast<float>(cur_index);
 
