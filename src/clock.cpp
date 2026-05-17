@@ -13,8 +13,10 @@ void Clock::on_update() {
     uint64_t now = SDL_GetPerformanceCounter();
     double_dt = static_cast<double>(now - last_time) / freq;
     last_time = now;
-    dt = static_cast<float>(double_dt);
     fps = static_cast<int>(1.0 / double_dt);
     if (static_cast<double>(fps) > freq)
         fps = static_cast<int>(freq);
+    if (double_dt > 0.5)
+        double_dt = 0.5;
+    dt = static_cast<float>(double_dt);
 }
