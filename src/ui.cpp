@@ -6,6 +6,7 @@
 #include "res.hpp"
 #include "vertex.hpp"
 #include <SDL3/SDL.h>
+#include <algorithm>
 
 static Frame* flow;
 static Image* detail;
@@ -29,6 +30,8 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 
 void construct_ui() {
     def_font = res->load_font("VCR_OSD_MONO.ttf", 24.f);
+    last_edge = nullptr;
+    last_vertex = nullptr;
     vertex_mode = 0;
 
     // Workflow
@@ -88,6 +91,9 @@ void construct_ui() {
     flow->add_child(new Background("Background"))
         ->set_down_handler([&](Background*, Container*, Point pos) {
             if (vertex_mode == 1) {
+                // push_back might reallocate memory
+                last_vertex = nullptr;
+                last_edge = nullptr;
                 flow->add_child(new Vertex("Vertex_NAME_TODO"))
                     ->set_rect(Rect({pos.x - 20.f, pos.y - 20.f, 40.f, 40.f}));
             }
@@ -103,6 +109,23 @@ void construct_ui() {
     // S, T vertexes
     flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 100.f, 40.f, 40.f});
     flow->add_child(new Vertex("Vertex_T"))->set_rect({100.f, 150.f, 40.f, 40.f});
+}
+
+void kbd_ui(char key) {
+    if (key == '+' && last_edge) {
+        last_edge->weight++;
+        last_edge->update_text();
+    } else if (key == '-' && last_edge) {
+        if (last_edge->weight > 1) {
+            last_edge->weight--;
+            last_edge->update_text();
+        } else {
+            auto index = last_edge - last_vertex->edges.data();
+            last_vertex->edges.erase(last_vertex->edges.begin() + index);
+            last_edge = nullptr;
+            last_vertex = nullptr;
+        }
+    }
 }
 
 void destroy_ui() { TTF_CloseFont(def_font); }

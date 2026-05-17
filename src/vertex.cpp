@@ -6,6 +6,8 @@
 #include <algorithm>
 
 extern TTF_Font* def_font;
+Edge* last_edge;
+Vertex* last_vertex;
 int vertex_mode;
 
 Edge::Edge() : end(nullptr), info(nullptr), weight(1), used(0) {}
@@ -77,6 +79,8 @@ void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
 }
 
 void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
+    last_vertex = nullptr;
+    last_edge = nullptr;
     Frame* f = reinterpret_cast<Frame*>(parent);
     if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
         clean_other_edges(parent);
@@ -88,7 +92,7 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
         return;
     if (vertex_mode == 2 && !down) {
         Container* focused = f->find_focused(pos);
-        // not bg, not cogwheel, not S, not this
+        // not null, not bg, not cogwheel, not S, not this
         if (focused != nullptr && focused != f->child[0] && focused != f->child[1] &&
             focused != f->child[2] && focused != this) {
             Vertex* v = reinterpret_cast<Vertex*>(focused);
@@ -97,10 +101,13 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
             if (it == edges.end()) {
                 edges.push_back(Edge());
                 edges.back().init(v);
+                last_edge = &edges.back();
             } else {
                 it->weight++;
                 it->update_text();
+                last_edge = &*it;
             }
+            last_vertex = this;
         }
     }
     holding = down;

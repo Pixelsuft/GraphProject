@@ -4,6 +4,7 @@
 #include "render.hpp"
 #include "res.hpp"
 #include "text.hpp"
+#include "ui.hpp"
 #include "window.hpp"
 #include <SDL3/SDL.h>
 
@@ -73,6 +74,12 @@ bool App::on_event(SDL_Event& ev) {
             mouse_entered = false;
             root->on_mouse_enter(nullptr, Point(-1, -1), false);
         }
+        return true;
+    case SDL_EVENT_KEY_DOWN:
+        if (ev.key.scancode == SDL_SCANCODE_EQUALS || ev.key.scancode == SDL_SCANCODE_KP_PLUS)
+            kbd_ui('+');
+        else if (ev.key.scancode == SDL_SCANCODE_MINUS || ev.key.scancode == SDL_SCANCODE_KP_MINUS)
+            kbd_ui('-');
         return true;
     case SDL_EVENT_WINDOW_RESIZED:
         on_resize();
