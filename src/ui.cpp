@@ -16,7 +16,6 @@ static std::vector<std::vector<Vertex*>> need_path;
 static Frame* flow;
 static Image* detail;
 static float timer;
-static int index;
 static int prev_i;
 static bool playing;
 
@@ -216,9 +215,9 @@ void construct_ui() {
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
             need_path = std::move(find_ford_paths(s_v, t_v));
+            std::reverse(need_path.begin(), need_path.end());
             playing = !need_path.empty();
             timer = 0.f;
-            index = 0;
             prev_i = -1;
 #ifdef _DEBUG
             SDL_Log("Calulated size: %i", static_cast<int>(need_path.size()));
@@ -295,18 +294,16 @@ void kbd_ui(char key) {
 void draw_ui() {
     if (!playing)
         return;
-    auto& cur_track = need_path[index];
+    auto& cur_track = need_path.back();
     timer += gclock->dt; // TODO: allow changing speed
     int cur_index = static_cast<int>(timer);
     float perc = timer - static_cast<float>(cur_index);
     if (cur_index >= cur_track.size() - 1) {
         timer = 0.f;
         prev_i = -1;
-        index++;
-        if (index >= need_path.size()) {
-            need_path.clear();
+        need_path.pop_back();
+        if (need_path.empty())
             playing = false;
-        }
         return;
     }
     if (prev_i != cur_index) {
