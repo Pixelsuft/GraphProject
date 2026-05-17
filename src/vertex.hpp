@@ -38,6 +38,7 @@ public:
     void on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) override;
     bool has_mouse_collision(Container* parent, Point pos) override;
     Edge* find_reverse(Edge* target);
+    Edge* find_connection(Vertex* other);
 };
 
 extern Edge* last_edge;

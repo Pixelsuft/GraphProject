@@ -1,6 +1,7 @@
 #include "ui.hpp"
 #include "background.hpp"
 #include "button.hpp"
+#include "clock.hpp"
 #include "frame.hpp"
 #include "image.hpp"
 #include "res.hpp"
@@ -14,6 +15,9 @@ TTF_Font* def_font;
 static std::vector<std::vector<Vertex*>> need_path;
 static Frame* flow;
 static Image* detail;
+static float timer;
+static int index;
+static int prev_i;
 static bool playing;
 
 // Structure to track the traversal path during BFS/DFS
@@ -220,6 +224,9 @@ void construct_ui() {
             }
             need_path = std::move(find_ford_paths(s_v, t_v));
             playing = !need_path.empty();
+            timer = 0.f;
+            index = 0;
+            prev_i = -1;
 #ifdef _DEBUG
             SDL_Log("Calulated size: %i", static_cast<int>(need_path.size()));
             for (auto& cog : need_path) {
@@ -284,11 +291,36 @@ void kbd_ui(char key) {
     }
 }
 
-
 void draw_ui() {
     if (!playing)
         return;
-
+    auto& cur_track = need_path[index];
+    timer += gclock->dt; // TODO: change speed
+    int cur_index = static_cast<int>(timer);
+    float perc = timer - static_cast<float>(cur_index);
+    if (cur_index >= cur_track.size() - 1) {
+        timer = 0.f;
+        prev_i = -1;
+        index++;
+        if (index >= need_path.size()) {
+            need_path.clear();
+            playing = false;
+        }
+        return;
+    }
+    if (prev_i != cur_index) {
+        prev_i = cur_index;
+        Edge* e = cur_track[cur_index]->find_connection(cur_track[cur_index + 1]);
+        e->used++;
+        e->update_text();
+    }
+    Point start = cur_track[cur_index]->get_center();
+    Point route = cur_track[cur_index + 1]->get_center() - start;
+    if (route.empty())
+        return;
+    Point need_pos = start + route * perc;
+    detail->rect.x = need_pos.x - detail->rect.w / 2.f;
+    detail->rect.y = need_pos.y - detail->rect.h / 2.f;
 }
 
 void destroy_ui() { TTF_CloseFont(def_font); }

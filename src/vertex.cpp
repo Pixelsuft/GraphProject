@@ -52,6 +52,12 @@ Edge* Vertex::find_reverse(Edge* target) {
     return (vit == target->end->edges.end()) ? nullptr : &*vit;
 }
 
+Edge* Vertex::find_connection(Vertex* other) {
+    auto vit =
+        std::find_if(edges.begin(), edges.end(), [other](const Edge& e) { return e.end == other; });
+    return (vit == edges.end()) ? nullptr : &*vit;
+}
+
 void Vertex::clean_other_edges(Container* parent) {
     Frame* f = reinterpret_cast<Frame*>(parent);
     for (auto it = f->child.begin() + 2; it != f->child.end(); it++) {
