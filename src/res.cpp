@@ -95,7 +95,11 @@ Texture Res::load_texture(std::string fn) {
 }
 
 TTF_Font* Res::load_font(std::string fn, float size) {
-    return TTF_OpenFontIO(open_stream(fn), true, size);
+    auto io = open_stream(fn);
+    TTF_Font* ret = TTF_OpenFontIO(io, true, size);
+    if (!ret)
+        SDL_CloseIO(io);
+    return ret;
 }
 
 Res::Res() {}
