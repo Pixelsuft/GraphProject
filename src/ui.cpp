@@ -176,7 +176,7 @@ void construct_ui() {
             last_edge = nullptr;
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
-            need_path = std::move(find_ford_paths(s_v, t_v));
+            need_path = find_ford_paths(s_v, t_v);
             if (need_path.empty())
                 return;
             vertex_mode = 0;
@@ -275,7 +275,7 @@ void draw_ui() {
     int cur_index = static_cast<int>(timer);
     float perc = timer - static_cast<float>(cur_index);
 
-    if (cur_index >= cur_track.size() - 1) {
+    if (cur_index >= static_cast<int>(cur_track.size()) - 1) {
         bottleneck--;
         if (bottleneck != 0) {
             timer = 0.f;
