@@ -1,4 +1,6 @@
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #include "render.hpp"
 #include "window.hpp"
 #include <SDL3/SDL.h>

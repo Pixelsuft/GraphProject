@@ -6,6 +6,7 @@ Debug
 Release
 ReleaseFast
 ./x64
+./ReleaseProject/x64
 jumbo
 embuild
 joined.txt

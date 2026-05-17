@@ -5,7 +5,7 @@ if not os.path.isdir(os.path.join(cwd, 'jumbo')):
     os.mkdir(os.path.join(cwd, 'jumbo'))
 out = open(os.path.join(cwd, 'jumbo', 'main.cpp'), 'w')
 out.write('// Automatically generated with script, do not touch!\n')
-out.write('#define JUMBO_BUILD\n')
+out.write('#define JUMBO_BUILD\n#define _USE_MATH_DEFINES\n')
 
 asset_arrays = ''
 asset_logic = ''

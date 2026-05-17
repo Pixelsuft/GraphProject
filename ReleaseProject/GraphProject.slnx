@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="GraphProject.vcxproj" Id="f0a798fc-6719-4fb1-b654-21a3f796dab0" />
+</Solution>
