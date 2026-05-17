@@ -13,8 +13,6 @@
 
 TTF_Font* def_font;
 static std::vector<std::pair<std::vector<Vertex*>, int>> need_path;
-static int cur_path_index = 0;
-static int cur_path_cogs = 0;
 static Frame* flow;
 static Image* detail;
 static float timer;
@@ -218,8 +216,6 @@ void construct_ui() {
                     edge.update_text();
                 }
             }
-            cur_path_index = 0;
-            cur_path_cogs = 0;
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     root->child_by_id("Button_Stop")->visible = false;
@@ -269,38 +265,27 @@ void draw_ui() {
         return;
     detail->visible = true;
 
-    auto& [cur_track, bottleneck] = need_path[cur_path_index];
+    auto& [cur_track, bottleneck] = need_path.back();
 
     timer += gclock->dt;
     int cur_index = static_cast<int>(timer);
     float perc = timer - static_cast<float>(cur_index);
 
-    // Finished a single cog's journey along this path?
     if (cur_index >= cur_track.size() - 1) {
-        cur_path_cogs++;
-
-        if (cur_path_cogs < bottleneck) {
-            // Replay the same path for another cog
+        bottleneck--;
+        if (bottleneck != 0) {
             timer = 0.f;
             prev_i = -1;
-            return;
         } else {
-            // Move to the next path
-            cur_path_index++;
-            cur_path_cogs = 0;
+            need_path.pop_back();
             timer = 0.f;
             prev_i = -1;
-
-            if (cur_path_index >= need_path.size()) {
+            if (need_path.empty())
                 playing = false;
-                return;
-            }
-            // We'll use the new path in the next frame
-            return;
         }
+        return;
     }
 
-    // Update edge usage and cogwheel position (unchanged logic)
     if (prev_i != cur_index) {
         prev_i = cur_index;
         Edge* e = cur_track[cur_index]->find_connection(cur_track[cur_index + 1]);
