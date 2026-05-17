@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <algorithm>
 
+static Point last_mouse;
 extern TTF_Font* def_font;
 Edge* last_edge;
 Vertex* last_vertex;
@@ -31,7 +32,7 @@ void Edge::update_text() {
     text->set_color(info, used == weight ? Color(1.f, 1.f, 0.f) : Color(1.f, 1.f, 1.f));
 }
 
-Vertex::Vertex(std::string id) : Container(id) {
+Vertex::Vertex(std::string id) : Container(id), holding_it(false) {
     color = Color(0.f, 1.f, 0.f, 0.5f);
     if (id.back() == 'S')
         color = Color(0.f, 1.f, 1.f, 0.5f);
@@ -78,7 +79,7 @@ void Vertex::on_draw(Container* parent) {
     float r = rect.w / 2.f;
     Point center = get_center();
     ren->fill_circle(center, r, color);
-    if (holding && vertex_mode == 2) {
+    if (holding_it && vertex_mode == 2) {
         ren->draw_arrow(center, last_mouse, Color(0.f, 1.f, 1.f));
     }
     for (auto& edge : edges) {
@@ -99,6 +100,7 @@ void Vertex::on_mouse_move(Container* parent, Point pos, Point dp, bool holding)
 
 void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down) {
     last_edge = nullptr;
+    holding_it = false;
     Frame* f = reinterpret_cast<Frame*>(parent);
     if (vertex_mode == 3 && down && color.r == 0.f && color.b == 0.f) {
         clean_other_edges(parent);
@@ -128,7 +130,7 @@ void Vertex::on_mouse_down(Container* parent, Point pos, uint8_t index, bool dow
             last_vertex = this;
         }
     }
-    holding = down;
+    holding_it = down;
 }
 
 bool Vertex::has_mouse_collision(Container* parent, Point pos) {

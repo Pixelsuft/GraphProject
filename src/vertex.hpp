@@ -26,8 +26,7 @@ class Vertex final : public Container {
 public:
     std::vector<Edge> edges;
     Color color;
-    Point last_mouse;
-    bool holding;
+    bool holding_it;
 
     Vertex(std::string id);
     ~Vertex() override;
