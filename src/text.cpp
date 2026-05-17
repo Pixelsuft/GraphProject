@@ -33,7 +33,11 @@ void TextEngine::set_color(void* text_obj, Color col) {
     TTF_SetTextColorFloat(reinterpret_cast<TTF_Text*>(text_obj), col.r, col.g, col.b, col.a);
 }
 
-void TextEngine::draw(void* text_obj, Point pos) {
-    TTF_DrawRendererText(reinterpret_cast<TTF_Text*>(text_obj), pos.x + ren->offset.x,
-                         pos.y + ren->offset.y);
+void TextEngine::draw(void* text_obj, Point pos, bool center) {
+    pos += ren->offset;
+    int w, h;
+    if (center && TTF_GetTextSize(reinterpret_cast<TTF_Text*>(text_obj), &w, &h)) {
+        pos -= Point(static_cast<float>(w) / 2.f, static_cast<float>(h) / 2.f);
+    }
+    TTF_DrawRendererText(reinterpret_cast<TTF_Text*>(text_obj), pos.x, pos.y);
 }

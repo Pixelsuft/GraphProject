@@ -14,7 +14,7 @@ public:
     void set_text(void* text_obj, const char* s);
     void set_color(void* text_obj, Color col);
     void destroy_text(void* text_obj);
-    void draw(void* text_obj, Point pos);
+    void draw(void* text_obj, Point pos, bool center = true);
 };
 
 extern TextEngine* text;

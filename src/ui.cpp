@@ -28,7 +28,7 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 }
 
 void construct_ui() {
-    def_font = res->load_font("VCR_OSD_MONO.ttf", 32.f);
+    def_font = res->load_font("VCR_OSD_MONO.ttf", 24.f);
     vertex_mode = 0;
 
     // Workflow

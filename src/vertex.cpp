@@ -66,7 +66,7 @@ void Vertex::on_draw(Container* parent) {
             continue;
         Point norm = route / route.get_length();
         ren->draw_arrow(center + norm * r, edge.end->get_center() - norm * r, Color(1.f, 0.f, 0.f));
-        text->draw(edge.info, center + norm * 60.f);
+        text->draw(edge.info, center + route / 4.f);
     }
 }
 
