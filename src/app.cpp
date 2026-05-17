@@ -100,6 +100,7 @@ bool App::on_update() {
     root->on_update(nullptr);
     ren->set_scale_enabled(true);
     root->on_draw(nullptr);
+    draw_ui();
     ren->set_scale_enabled(false);
     ren->present();
     return true;

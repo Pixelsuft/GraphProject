@@ -10,7 +10,7 @@ Edge* last_edge;
 Vertex* last_vertex;
 int vertex_mode;
 
-Edge::Edge() : end(nullptr), info(nullptr), weight(1), used(0) {}
+Edge::Edge() : end(nullptr), info(nullptr), weight(1), used(0), flow(0) {}
 
 void Edge::init(Vertex* e) {
     info = text->create_text(def_font);
@@ -44,6 +44,12 @@ Vertex::~Vertex() {
         last_vertex = nullptr;
         last_edge = nullptr;
     }
+}
+
+Edge* Vertex::find_reverse(Edge* target) {
+    auto vit = std::find_if(target->end->edges.begin(), target->end->edges.end(),
+                            [this](const Edge& e) { return e.end == this; });
+    return (vit == target->end->edges.end()) ? nullptr : &*vit;
 }
 
 void Vertex::clean_other_edges(Container* parent) {

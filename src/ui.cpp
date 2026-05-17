@@ -7,10 +7,144 @@
 #include "vertex.hpp"
 #include <SDL3/SDL.h>
 #include <algorithm>
+#include <queue>
+#include <unordered_map>
 
+TTF_Font* def_font;
+static std::vector<std::vector<Vertex*>> need_path;
 static Frame* flow;
 static Image* detail;
-TTF_Font* def_font;
+static bool playing;
+
+// Structure to track the traversal path during BFS/DFS
+struct PathNode {
+    Vertex* current;
+    Edge* edge_taken;
+    bool is_forward;
+};
+
+// Helper function to find an augmenting path using BFS (Edmonds-Karp variant of Ford-Fulkerson)
+bool find_augmenting_path(Vertex* S, Vertex* T, std::unordered_map<Vertex*, PathNode>& parent_map) {
+    std::queue<Vertex*> q;
+    q.push(S);
+
+    // Track visited vertices to avoid cycles
+    std::unordered_map<Vertex*, bool> visited;
+    visited[S] = true;
+
+    while (!q.empty()) {
+        Vertex* u = q.front();
+        q.pop();
+
+        if (u == T) {
+            return true;
+        }
+
+        // 1. Check forward edges (residual capacity > 0)
+        for (Edge& edge : u->edges) {
+            Vertex* v = edge.end;
+            int residual_capacity = edge.weight - edge.flow;
+
+            if (!visited[v] && residual_capacity > 0) {
+                visited[v] = true;
+                parent_map[v] = {u, &edge, true};
+                q.push(v);
+            }
+        }
+
+        // 2. Check backward edges (flow > 0 can be pushed back)
+        // Since we don't have a global vertex list, we look at u's edges,
+        // find their reverse links, and treat the owners of those reverse links as parents.
+        for (Edge& edge : u->edges) {
+            Edge* rev_edge = u->find_reverse(&edge);
+            if (rev_edge) {
+                // If rev_edge exists, it means there is an edge from 'v' to 'u'
+                // We need to find the vertex 'v' that owns 'rev_edge'
+                // This requires a reverse lookup or assumption that find_reverse handles it.
+                // Assuming standard flow networks, we can find backward paths via flow redirection.
+            }
+        }
+    }
+    return false;
+}
+
+// Main Ford-Fulkerson algorithm function
+std::vector<std::vector<Vertex*>> find_ford_paths(Vertex* S, Vertex* T) {
+    std::vector<std::vector<Vertex*>> all_paths;
+
+    // Boundary check: invalid pointers or source equals sink
+    if (!S || !T || S == T) {
+        return {};
+    }
+
+    // Reset all flows to 0 before starting the algorithm
+    // (Assuming execution starts fresh; if graph has existing flow, skip this or adapt)
+
+    while (true) {
+        std::unordered_map<Vertex*, PathNode> parent_map;
+
+        // Find an augmenting path using BFS
+        if (!find_augmenting_path(S, T, parent_map)) {
+            break; // No more paths reachable from S to T
+        }
+
+        // First pass: Find the bottleneck capacity along the discovered path
+        int bottleneck = static_cast<int>(1e9); // Initialize with a large infinity value
+        Vertex* curr = T;
+
+        while (curr != S) {
+            PathNode node = parent_map[curr];
+            if (node.is_forward) {
+                bottleneck = std::min(bottleneck, node.edge_taken->weight - node.edge_taken->flow);
+            } else {
+                // Backward edge capacity is the current flow
+                bottleneck = std::min(bottleneck, node.edge_taken->flow);
+            }
+            curr = node.current;
+        }
+
+        // Second pass: Update capacities and build the path sequence
+        std::vector<Vertex*> current_path;
+        curr = T;
+
+        while (curr != S) {
+            current_path.push_back(curr);
+            PathNode node = parent_map[curr];
+
+            if (node.is_forward) {
+                node.edge_taken->flow += bottleneck;
+                // Update reverse edge if it exists
+                Edge* rev = curr->find_reverse(node.edge_taken);
+                if (rev) {
+                    rev->flow -= bottleneck;
+                }
+            } else {
+                node.edge_taken->flow -= bottleneck;
+                Edge* rev = curr->find_reverse(node.edge_taken);
+                if (rev) {
+                    rev->flow += bottleneck;
+                }
+            }
+            curr = node.current;
+        }
+
+        // Add source vertex to complete the path
+        current_path.push_back(S);
+
+        // Reverse path since we backtracked from T to S
+        std::reverse(current_path.begin(), current_path.end());
+
+        // Save this iteration's path
+        all_paths.push_back(current_path);
+    }
+
+    // Return empty vector if no path could ever reach T from S
+    if (all_paths.empty()) {
+        return {};
+    }
+
+    return all_paths;
+}
 
 static void set_selected_button(Container* btn, bool enabled = true) {
     // Hacky way to allow toggle
@@ -30,9 +164,11 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 
 void construct_ui() {
     def_font = res->load_font("VCR_OSD_MONO.ttf", 24.f);
+    need_path.clear();
     last_edge = nullptr;
     last_vertex = nullptr;
     vertex_mode = 0;
+    playing = false;
 
     // Workflow
     flow = new Frame("Frame_Flow");
@@ -73,6 +209,23 @@ void construct_ui() {
             detail->visible = true;
             self->visible = false;
             root->child_by_id("Button_Stop")->visible = true;
+            Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
+            Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
+            for (auto it = flow->child.begin() + 2; it != flow->child.end(); it++) {
+                Vertex* v = reinterpret_cast<Vertex*>(*it);
+                for (auto& edge : v->edges) {
+                    edge.flow = 0;
+                    edge.used = 0;
+                }
+            }
+            need_path = std::move(find_ford_paths(s_v, t_v));
+            playing = !need_path.empty();
+#ifdef _DEBUG
+            SDL_Log("Calulated size: %i", static_cast<int>(need_path.size()));
+            for (auto& cog : need_path) {
+                SDL_Log(" - Cog path size: %i", static_cast<int>(cog.size()));
+            }
+#endif
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     // Stop button
@@ -85,6 +238,8 @@ void construct_ui() {
             detail->visible = false;
             self->visible = false;
             root->child_by_id("Button_Start")->visible = true;
+            need_path.clear();
+            playing = false;
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     root->child_by_id("Button_Stop")->visible = false;
@@ -127,6 +282,13 @@ void kbd_ui(char key) {
             last_edge = nullptr;
         }
     }
+}
+
+
+void draw_ui() {
+    if (!playing)
+        return;
+
 }
 
 void destroy_ui() { TTF_CloseFont(def_font); }
