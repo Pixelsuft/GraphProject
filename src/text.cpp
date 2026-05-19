@@ -34,10 +34,18 @@ void TextEngine::set_color(void* text_obj, Color col) {
 }
 
 void TextEngine::draw(void* text_obj, Point pos, bool center) {
+#ifndef __EMSCRIPTEN__
+    pos = (pos + ren->offset) * ren->scale;
+    ren->set_scale_enabled(false);
+#else
     pos += ren->offset;
+#endif
     int w, h;
     if (center && TTF_GetTextSize(reinterpret_cast<TTF_Text*>(text_obj), &w, &h)) {
         pos -= Point(static_cast<float>(w) / 2.f, static_cast<float>(h) / 2.f);
     }
     TTF_DrawRendererText(reinterpret_cast<TTF_Text*>(text_obj), pos.x, pos.y);
+#ifndef __EMSCRIPTEN__
+    ren->set_scale_enabled(true);
+#endif
 }

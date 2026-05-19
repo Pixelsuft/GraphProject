@@ -56,7 +56,7 @@ Container* Frame::find_focused(Point pos) {
 
 void Frame::on_mouse_move(Container* parent, Point pos, Point dp, bool holding) {
     // TODO: fix offset/scale
-    pos = (pos - rect.as_point() - inner_offset) / scale;
+    pos = (pos - rect.as_point()) / scale - inner_offset;
     dp /= scale;
     if (!left_down) {
         Container* new_hover = find_focused(pos);
@@ -83,7 +83,7 @@ void Frame::on_mouse_down(Container* parent, Point pos, uint8_t index, bool down
         left_down = down;
         if (c_hovered != nullptr) {
             // TODO: fix offset/scale
-            Point new_pos = (pos - rect.as_point() - inner_offset) / scale;
+            Point new_pos = (pos - rect.as_point()) / scale - inner_offset;
             c_hovered->on_mouse_down(this, new_pos, index, down);
         }
         if (!down)

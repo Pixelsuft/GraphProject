@@ -86,6 +86,10 @@ bool App::on_event(SDL_Event& ev) {
         else if (ev.key.scancode == SDL_SCANCODE_F)
             kbd_ui('f');
         return true;
+    case SDL_EVENT_MOUSE_WHEEL:
+        if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
+            scale_ui({ev.wheel.mouse_x, ev.wheel.mouse_y}, ev.wheel.y);
+        return true;
     case SDL_EVENT_WINDOW_RESIZED:
         on_resize();
         return true;
@@ -104,8 +108,8 @@ bool App::on_update() {
     ren->clear(Color());
     root->on_update(nullptr);
     ren->set_scale_enabled(true);
-    root->on_draw(nullptr);
     draw_ui();
+    root->on_draw(nullptr);
     ren->set_scale_enabled(false);
     ren->present();
     return true;

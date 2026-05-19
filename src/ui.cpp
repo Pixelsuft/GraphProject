@@ -4,8 +4,8 @@
 #include "clock.hpp"
 #include "frame.hpp"
 #include "image.hpp"
+#include "label.hpp"
 #include "res.hpp"
-#include "text.hpp"
 #include "vertex.hpp"
 #include <SDL3/SDL.h>
 #include <algorithm>
@@ -13,7 +13,8 @@
 #include <unordered_map>
 
 TTF_Font* def_font;
-void* flow_text;
+static TTF_Font* def_font2;
+static Label* result_label;
 static std::vector<std::pair<std::vector<Vertex*>, int>> need_path;
 static Frame* flow;
 static Image* detail;
@@ -135,8 +136,7 @@ static void set_selected_button(Container* btn, bool enabled = true) {
 
 void construct_ui() {
     def_font = res->load_font("VCR_OSD_MONO.ttf", 24.f);
-    flow_text = text->create_text(def_font);
-    text->set_color(flow_text, Color(0.f, 1.f, 0.f));
+    def_font2 = res->load_font("VCR_OSD_MONO.ttf", 24.f);
     last_edge = nullptr;
     last_vertex = nullptr;
     vertex_mode = 0;
@@ -179,8 +179,11 @@ void construct_ui() {
             Vertex* s_v = reinterpret_cast<Vertex*>(flow->child[2]);
             Vertex* t_v = reinterpret_cast<Vertex*>(flow->child[3]);
             need_path = find_ford_paths(s_v, t_v);
-            if (need_path.empty())
+            if (need_path.empty()) {
+                result_label->set_text("Max-Flow: Error");
+                total = -1;
                 return;
+            }
             vertex_mode = 0;
             set_selected_button(self, false);
             self->visible = false;
@@ -220,6 +223,11 @@ void construct_ui() {
         })
         ->set_rect({232.f, 10.f, 64.f, 64.f});
     root->child_by_id("Button_Stop")->visible = false;
+    // Max-Flow text
+    result_label = root->add_child(new Label("Label_MaxFlow", def_font2))
+                       ->set_text("Max-Flow: 0")
+                       ->set_color(Color(0.f, 1.f, 0.f));
+    result_label->set_rect({10.f, 84.f, 0.f, 0.f});
 
     // Background
     flow->add_child(new Background("Background"))
@@ -241,8 +249,9 @@ void construct_ui() {
         ->set_texture(res->load_texture("cogwheel.png"))
         ->set_rect({0.f, 0.f, 32.f, 32.f});
     // S, T vertexes
-    flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 120.f, 40.f, 40.f});
+    flow->add_child(new Vertex("Vertex_S"))->set_rect({100.f, 140.f, 40.f, 40.f});
     flow->add_child(new Vertex("Vertex_T"))->set_rect({300.f, 300.f, 40.f, 40.f});
+    update_ui_font_scale();
 }
 
 void kbd_ui(char key) {
@@ -262,16 +271,45 @@ void kbd_ui(char key) {
     } else if (key == 'r' && need_path.empty()) {
         auto prev_mode = vertex_mode;
         vertex_mode = 3;
+        flow->scale = 1.f;
+        flow->inner_offset = Point();
         while (flow->child.size() > 4)
             flow->child.back()->on_mouse_down(flow, Point(), 0, true);
+        Vertex* s = reinterpret_cast<Vertex*>(flow->child[2]);
+        for (auto& e : s->edges)
+            e.destroy();
+        s->edges.clear();
+        s->set_rect({100.f, 140.f, 40.f, 40.f});
+        flow->child[3]->set_rect({300.f, 300.f, 40.f, 40.f});
         vertex_mode = prev_mode;
+        update_ui_font_scale();
     } else if (key == 'f')
         fast = !fast;
 }
 
+void scale_ui(Point pos, float mul) {
+    mul /= 5.f;
+    float new_scale = std::min(std::max(flow->scale + mul, 0.2f), 4.f);
+    Point root_pos = pos / root->scale;
+    Point flow_pos = (root_pos - flow->rect.as_point()) / flow->scale - flow->inner_offset;
+    Point old_offset = flow->inner_offset;
+    float old_scale = flow->scale;
+    if (old_scale != new_scale)
+        flow->inner_offset = (flow_pos + old_offset) * (old_scale / new_scale) - flow_pos;
+    flow->scale = new_scale;
+    update_ui_font_scale();
+}
+
+void update_ui_font_scale() {
+#ifndef __EMSCRIPTEN__
+    TTF_SetFontSize(def_font, 24.f * root->scale * flow->scale);
+    TTF_SetFontSize(def_font2, 24.f * root->scale);
+#endif
+}
+
 void draw_ui() {
-    text->set_text(flow_text, (std::string("Flow: ") + std::to_string(total)).c_str());
-    text->draw(flow_text, Point(10.f, 84.f), false);
+    if (total != -1)
+        result_label->set_text((std::string("Max-Flow: ") + std::to_string(total)).c_str());
     if (need_path.empty()) {
         Point need_pos = reinterpret_cast<Vertex*>(flow->child[3])->get_center();
         detail->rect.x = need_pos.x - detail->rect.w / 2.f;
@@ -321,6 +359,6 @@ void draw_ui() {
 }
 
 void destroy_ui() {
-    text->destroy_text(flow_text);
+    TTF_CloseFont(def_font2);
     TTF_CloseFont(def_font);
 }

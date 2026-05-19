@@ -1,7 +1,7 @@
 #include "image.hpp"
 #include "render.hpp"
 
-Image::Image(std::string id, bool stretch) : Container(id), stretch(stretch), rot(0.0) {}
+Image::Image(std::string id, bool stretch) : Container(id), rot(0.0), stretch(stretch) {}
 
 Image::~Image() { tex.destroy(); }
 
