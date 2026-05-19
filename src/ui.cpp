@@ -268,7 +268,7 @@ void kbd_ui(char key) {
             last_vertex->edges.erase(last_vertex->edges.begin() + index);
             last_edge = nullptr;
         }
-    } else if (key == 'r' && need_path.empty()) {
+    } else if (key == 'r' && need_path.empty() && !detail->visible) {
         auto prev_mode = vertex_mode;
         vertex_mode = 3;
         flow->scale = 1.f;
