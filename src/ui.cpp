@@ -269,7 +269,6 @@ void kbd_ui(char key) {
             last_edge = nullptr;
         }
     } else if (key == 'r' && need_path.empty() && !detail->visible) {
-        auto prev_mode = vertex_mode;
         vertex_mode = 3;
         flow->scale = 1.f;
         flow->inner_offset = Point();
@@ -281,8 +280,14 @@ void kbd_ui(char key) {
         s->edges.clear();
         s->set_rect({100.f, 140.f, 40.f, 40.f});
         flow->child[3]->set_rect({300.f, 300.f, 40.f, 40.f});
-        vertex_mode = prev_mode;
+        flow->scale = 1.f;
+        flow->inner_offset = Point();
+        vertex_mode = 0;
+        set_selected_button(root->child_by_id("Button_Start"));
         update_ui_font_scale();
+    } else if (key == 's') {
+        flow->scale = 1.f;
+        flow->inner_offset = Point();
     } else if (key == 'f')
         fast = !fast;
 }

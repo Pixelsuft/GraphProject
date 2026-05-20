@@ -83,6 +83,8 @@ bool App::on_event(SDL_Event& ev) {
         else if (ev.key.scancode == SDL_SCANCODE_R || ev.key.scancode == SDL_SCANCODE_BACKSPACE ||
                  ev.key.scancode == SDL_SCANCODE_DELETE)
             kbd_ui('r');
+        else if (ev.key.scancode == SDL_SCANCODE_S)
+            kbd_ui('s');
         else if (ev.key.scancode == SDL_SCANCODE_F)
             kbd_ui('f');
         return true;
