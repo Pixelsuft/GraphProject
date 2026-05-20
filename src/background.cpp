@@ -18,8 +18,8 @@ void Background::on_draw(Container* parent) {
     float size = 1.f;
     if (f->scale < 1.f)
         size = 1.f / f->scale;
-    for (float x = -20.f; x < (rect.w + 40.f) / f->scale; x += 40.f) {
-        for (float y = -20.f; y < (rect.h + 40.f) / f->scale; y += 40.f) {
+    for (float x = -20.f; x < rect.w / f->scale + 40.f; x += 40.f) {
+        for (float y = -20.f; y < rect.h / f->scale + 40.f; y += 40.f) {
             ren->fill_rect({x + offset.x, y + offset.y, size, size}, Color(1.f, 1.f, 1.f));
         }
     }
