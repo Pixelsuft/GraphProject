@@ -50,7 +50,29 @@ void App::on_resize() {
     root->on_resize(nullptr);
 }
 
+inline char scan_to_char(SDL_Scancode scancode) {
+    switch (scancode) {
+    case SDL_SCANCODE_EQUALS:
+    case SDL_SCANCODE_KP_PLUS:
+        return '+';
+    case SDL_SCANCODE_MINUS:
+    case SDL_SCANCODE_KP_MINUS:
+        return '-';
+    case SDL_SCANCODE_R:
+    case SDL_SCANCODE_BACKSPACE:
+    case SDL_SCANCODE_DELETE:
+        return 'r';
+    case SDL_SCANCODE_S:
+        return 's';
+    case SDL_SCANCODE_F:
+        return 'f';
+    default:
+        return '\0';
+    }
+}
+
 bool App::on_event(SDL_Event& ev) {
+    char scan_char;
     switch (ev.type) {
     case SDL_EVENT_MOUSE_MOTION:
         if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
@@ -76,17 +98,9 @@ bool App::on_event(SDL_Event& ev) {
         }
         return true;
     case SDL_EVENT_KEY_DOWN:
-        if (ev.key.scancode == SDL_SCANCODE_EQUALS || ev.key.scancode == SDL_SCANCODE_KP_PLUS)
-            kbd_ui('+');
-        else if (ev.key.scancode == SDL_SCANCODE_MINUS || ev.key.scancode == SDL_SCANCODE_KP_MINUS)
-            kbd_ui('-');
-        else if (ev.key.scancode == SDL_SCANCODE_R || ev.key.scancode == SDL_SCANCODE_BACKSPACE ||
-                 ev.key.scancode == SDL_SCANCODE_DELETE)
-            kbd_ui('r');
-        else if (ev.key.scancode == SDL_SCANCODE_S)
-            kbd_ui('s');
-        else if (ev.key.scancode == SDL_SCANCODE_F)
-            kbd_ui('f');
+        scan_char = scan_to_char(ev.key.scancode);
+        if (scan_char != '\0')
+            kbd_ui(scan_char);
         return true;
     case SDL_EVENT_MOUSE_WHEEL:
         if (SDL_ConvertEventToRenderCoordinates(ren->get_handle(), &ev))
