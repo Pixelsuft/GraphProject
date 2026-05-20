@@ -184,6 +184,9 @@
   <ItemGroup>
     <ResourceCompile Include="GraphProject.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon64.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
