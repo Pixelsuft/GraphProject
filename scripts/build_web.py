@@ -11,6 +11,7 @@ cmdline = [
     os.path.join(cwd, 'jumbo', 'main.cpp'),
     '-sUSE_SDL=3',
     '-sUSE_SDL_TTF=3',
+    '-DNDEBUG',
     '-fno-exceptions',
     '-fno-rtti',
     '-Wall',
