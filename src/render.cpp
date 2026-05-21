@@ -4,6 +4,9 @@
 #include "render.hpp"
 #include "window.hpp"
 #include <SDL3/SDL.h>
+#ifndef M_PI
+#define M_PI 3.1415926535897932384
+#endif
 
 Render::Render(void* win_handle) {
     handle = nullptr;
