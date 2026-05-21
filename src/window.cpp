@@ -3,12 +3,15 @@
 #include <SDL3/SDL.h>
 
 Window::Window() {
-#ifdef _DEBUG
+#if defined(_DEBUG)
     int w = 800;
     int h = 600;
-#else
+#elif defined(__EMSCRIPTEN__)
     int w = 1152;
     int h = 864;
+#else
+    int w = 1024;
+    int h = 768;
 #endif
     handle =
         SDL_CreateWindow("SuperPuperMegaGraphProject", w, h,
